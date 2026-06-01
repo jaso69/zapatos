@@ -1,0 +1,62 @@
+/* Fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Variables de marca - personalizar con tu branding */
+@theme {
+  --color-brand-50: #faf5f0;
+  --color-brand-100: #f0e4d4;
+  --color-brand-200: #e0c9a8;
+  --color-brand-300: #cda574;
+  --color-brand-400: #bf864e;
+  --color-brand-500: #b3713a;
+  --color-brand-600: #9a5a30;
+  --color-brand-700: #7d4429;
+  --color-brand-800: #683928;
+  --color-brand-900: #583024;
+  --color-brand-950: #321811;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Colores para tema claro */
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  --color-surface: #f3f4f6;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+  }
+
+  :root.dark {
+    --color-bg: #111827;
+    --color-bg-secondary: #1f2937;
+    --color-text: #f9fafb;
+    --color-text-secondary: #9ca3af;
+    --color-border: #374151;
+    --color-surface: #1f2937;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    @apply antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}

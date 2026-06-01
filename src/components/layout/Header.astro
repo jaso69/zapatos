@@ -1,0 +1,155 @@
+---
+import { getTranslations, type Language } from '../../i18n';
+import LanguageSelector from './LanguageSelector.tsx';
+
+const lang: Language = Astro.locals.lang || 'es';
+const t = getTranslations(lang);
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: t.nav.home },
+  { href: '/tienda', label: t.nav.shop },
+  { href: '/nosotros', label: t.nav.about },
+  { href: '/contacto', label: t.nav.contact },
+];
+---
+
+<header id="main-header" class="bg-[var(--color-bg)] border-b border-[var(--color-border)] sticky top-0 z-50 transition-all duration-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 md:h-20">
+      <!-- Logo -->
+      <a href="/" class="flex items-center">
+        <img src="/logo.webp" alt="Sanvin" class="h-10 md:h-12 w-auto dark:brightness-0 dark:invert transition-[filter] duration-200" />
+      </a>
+
+      <!-- Navigation desktop -->
+      <nav class="hidden md:flex items-center gap-8">
+        {navLinks.map(({ href, label }) => (
+          <a
+            href={href}
+            class:list={[
+              'text-sm font-medium uppercase tracking-wider transition-colors duration-200',
+              currentPath === href
+                ? 'text-brand-600'
+                : 'text-[var(--color-text-secondary)] hover:text-brand-600',
+            ]}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Selector de idioma + Tema + Carrito + Menú móvil -->
+      <div class="flex items-center gap-2">
+        <LanguageSelector client:load />
+
+        <!-- Botón tema -->
+        <button
+          id="theme-toggle"
+          class="p-2 text-[var(--color-text-secondary)] hover:text-brand-600 transition-colors rounded-full hover:bg-[var(--color-surface)]"
+          aria-label="Cambiar tema"
+        >
+          <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+        </button>
+
+        <!-- Botón carrito -->
+        <a
+          href="/carrito"
+          class="relative p-2 text-[var(--color-text-secondary)] hover:text-brand-600 transition-colors rounded-full hover:bg-[var(--color-surface)]"
+          aria-label="Ver carrito"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <span id="cart-count" class="hidden absolute -top-1 -right-1 bg-brand-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+            0
+          </span>
+        </a>
+
+        <!-- Botón menú móvil -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden p-2 text-[var(--color-text-secondary)] hover:text-brand-600 transition-colors rounded-full hover:bg-[var(--color-surface)]"
+          aria-label="Abrir menú"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menú móvil -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-[var(--color-border)]">
+    <nav class="px-4 py-4 space-y-3">
+      {navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class:list={[
+            'block text-sm font-medium uppercase tracking-wider py-2',
+            currentPath === href
+              ? 'text-brand-600'
+              : 'text-[var(--color-text-secondary)]',
+          ]}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const themeToggle = document.getElementById('theme-toggle');
+  const iconSun = document.getElementById('icon-sun');
+  const iconMoon = document.getElementById('icon-moon');
+  const root = document.documentElement;
+  const header = document.getElementById('main-header');
+
+  function updateIcons() {
+    const isDark = root.classList.contains('dark');
+    if (iconSun && iconMoon) {
+      iconSun.classList.toggle('hidden', !isDark);
+      iconMoon.classList.toggle('hidden', isDark);
+    }
+  }
+
+  function loadTheme() {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    updateIcons();
+  }
+
+  function toggleTheme() {
+    root.classList.toggle('dark');
+    localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+    updateIcons();
+  }
+
+  function handleScroll() {
+    if (header) {
+      if (window.scrollY > 50) {
+        header.classList.add('bg-[var(--color-bg)]/40', 'backdrop-blur-md', 'shadow-sm');
+        header.classList.remove('bg-[var(--color-bg)]');
+      } else {
+        header.classList.remove('bg-[var(--color-bg)]/50', 'backdrop-blur-md', 'shadow-sm');
+        header.classList.add('bg-[var(--color-bg)]');
+      }
+    }
+  }
+
+  loadTheme();
+  themeToggle?.addEventListener('click', toggleTheme);
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+</script>

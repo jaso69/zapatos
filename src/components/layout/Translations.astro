@@ -1,0 +1,13 @@
+---
+import { getTranslations, type Language } from '../i18n';
+import type { Translations } from '../i18n/es';
+
+interface Props {
+  lang?: Language;
+}
+
+const lang: Language = Astro.locals.lang || 'es';
+const t = getTranslations(lang);
+---
+
+{t}

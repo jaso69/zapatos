@@ -1,0 +1,103 @@
+---
+import { getTranslations, type Language } from '../i18n';
+import MainLayout from '../layouts/MainLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+
+const lang: Language = Astro.locals.lang || 'es';
+const t = getTranslations(lang);
+---
+
+<MainLayout title="Sanvin | Calzado de Diseño">
+  <Header slot="header" />
+
+<!-- Hero con imagen de fondo -->
+  <section class="relative h-screen md:h-[90vh] flex items-center overflow-hidden">
+    <div class="absolute inset-0">
+      <img
+        src="/backend-img.webp"
+        alt=""
+        class="w-full h-full object-fill"
+        aria-hidden="true"
+      />
+    </div>
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 w-full">
+      <div class="max-w-2xl">
+        <h1 class="text-4xl md:text-6xl font-heading font-bold text-white leading-tight">
+          {t.hero.title}
+        </h1>
+        <p class="mt-6 text-lg text-white/80 leading-relaxed">
+          {t.hero.subtitle}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a
+            href="/tienda"
+            class="inline-block px-8 py-3 bg-brand-600 text-white font-medium text-sm uppercase tracking-wider rounded hover:bg-brand-700 transition-colors"
+          >
+            {t.hero.ctaCollection}
+          </a>
+          <a
+            href="/nosotros"
+            class="inline-block px-8 py-3 border border-white text-white font-medium text-sm uppercase tracking-wider rounded hover:bg-white hover:text-gray-900 transition-colors"
+          >
+            {t.hero.ctaStory}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Productos destacados (placeholder) -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-[var(--color-text)]">
+          {t.featured.title}
+        </h2>
+        <p class="mt-4 text-[var(--color-text-secondary)]">{t.featured.subtitle}</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {[1, 2, 3].map((i) => (
+          <div class="group">
+            <div class="aspect-square bg-[var(--color-surface)] rounded-lg overflow-hidden mb-4">
+              <div class="w-full h-full flex items-center justify-center text-[var(--color-text-secondary)]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            <h3 class="font-heading font-semibold text-lg text-[var(--color-text)] group-hover:text-brand-600 transition-colors">
+              {t.shop.productModel} {i}
+            </h3>
+            <p class="mt-1 text-brand-600 font-medium">89,99{t.common.price}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center mt-12">
+        <a
+          href="/tienda"
+          class="inline-block px-8 py-3 border border-brand-600 text-brand-600 font-medium text-sm uppercase tracking-wider rounded hover:bg-brand-600 hover:text-white transition-colors"
+        >
+          {t.featured.cta}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner de marca -->
+  <section class="bg-brand-800 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-heading font-bold">
+        {t.brand.title}
+      </h2>
+      <p class="mt-4 text-brand-200 max-w-2xl mx-auto leading-relaxed">
+        {t.brand.description}
+      </p>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</MainLayout>
