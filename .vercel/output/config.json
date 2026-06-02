@@ -20,36 +20,40 @@
 			"dest": "_render"
 		},
 		{
+			"src": "^/api/chat/?$",
+			"dest": "_render"
+		},
+		{
 			"src": "^/carrito/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/checkout/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/contacto/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/nosotros/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/tienda/([^/]+?)/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/tienda/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/404/?$",
-			"dest": "/_isr?x_astro_path=$0"
+			"dest": "_render"
 		},
 		{
 			"src": "^/.*$",

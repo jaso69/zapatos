@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Assistant from '../components/Assistant';
 
 interface Props {
   title: string;
@@ -38,6 +39,8 @@ const brandTitle = title.includes('Sanvin') ? title : `Sanvin | ${title}`;
       </main>
       <slot name="footer" />
     </div>
+
+    <Assistant client:load />
 
     <script>
       const observer = new IntersectionObserver(
