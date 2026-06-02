@@ -2,7 +2,7 @@ import { c as createComponent } from './astro-component_pxVsneAM.mjs';
 import 'piccolore';
 import { J as createRenderInstruction, I as renderTemplate, bh as renderSlot, bi as renderHead, _ as addAttribute, u as maybeRenderHead } from './sequence_C3O65D5N.mjs';
 import 'clsx';
-import { r as renderComponent } from './entrypoint_BEZGWQoG.mjs';
+import { r as renderComponent } from './entrypoint_D-24BTfx.mjs';
 import { jsxs, jsx, Fragment } from 'react/jsx-runtime';
 import { useState, useEffect } from 'react';
 import { atom } from 'nanostores';

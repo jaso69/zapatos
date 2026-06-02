@@ -1,8 +1,8 @@
 import { c as createComponent } from './astro-component_pxVsneAM.mjs';
 import 'piccolore';
 import { I as renderTemplate, u as maybeRenderHead } from './sequence_C3O65D5N.mjs';
-import { r as renderComponent } from './entrypoint_BEZGWQoG.mjs';
-import { $ as $$MainLayout, g as getTranslations, a as $$Header, b as $$Footer } from './Footer_GgtG1gMF.mjs';
+import { r as renderComponent } from './entrypoint_D-24BTfx.mjs';
+import { $ as $$MainLayout, g as getTranslations, a as $$Header, b as $$Footer } from './Footer_VH53ZxJN.mjs';
 
 const $$Carrito = createComponent(($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$props, $$slots);
