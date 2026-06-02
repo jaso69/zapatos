@@ -1,0 +1,31 @@
+import { c as createComponent } from './astro-component_pxVsneAM.mjs';
+import 'piccolore';
+import { I as renderTemplate, u as maybeRenderHead } from './sequence_C3O65D5N.mjs';
+import { r as renderComponent } from './entrypoint_BEZGWQoG.mjs';
+import { $ as $$MainLayout, a as $$Header, b as $$Footer, g as getTranslations } from './Footer_GgtG1gMF.mjs';
+
+const $$slug = createComponent(($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$props, $$slots);
+  Astro2.self = $$slug;
+  const lang = Astro2.locals.lang || "es";
+  const t = getTranslations(lang);
+  const { slug } = Astro2.params;
+  return renderTemplate`${renderComponent($$result, "MainLayout", $$MainLayout, { "title": `${slug} | ZAPATOS` }, { "default": ($$result2) => renderTemplate`  ${maybeRenderHead()}<section class="py-12 md:py-16"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- Breadcrumb --> <nav class="mb-8 text-sm text-[var(--color-text-secondary)]"> <a href="/" class="hover:text-brand-600">${t.nav.home}</a> <span class="mx-2">/</span> <a href="/tienda" class="hover:text-brand-600">${t.nav.shop}</a> <span class="mx-2">/</span> <span class="text-[var(--color-text)]">${slug}</span> </nav> <div class="grid grid-cols-1 md:grid-cols-2 gap-12"> <!-- Galería de imágenes (placeholder) --> <div> <div class="aspect-square bg-[var(--color-surface)] rounded-lg flex items-center justify-center text-[var(--color-text-secondary)]"> <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path> </svg> </div> <div class="grid grid-cols-4 gap-3 mt-3"> ${[1, 2, 3, 4].map(() => renderTemplate`<div class="aspect-square bg-[var(--color-surface)] rounded cursor-pointer hover:ring-2 ring-brand-600 transition"></div>`)} </div> </div> <!-- Info del producto --> <div> <h1 class="text-3xl font-heading font-bold text-[var(--color-text)]"> ${t.shop.productModel}: ${slug} </h1> <p class="mt-2 text-2xl text-brand-600 font-semibold">89,99${t.common.price}</p> <p class="mt-6 text-[var(--color-text-secondary)] leading-relaxed">
+Descripción del producto. Se cargará desde Strapi cuando esté configurado.
+            Zapato de alta calidad confeccionado con materiales premium.
+</p> <!-- Selector de talla --> <div class="mt-8"> <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3"> ${t.product.size} </h3> <div class="flex flex-wrap gap-2"> ${["38", "39", "40", "41", "42", "43", "44"].map((talla) => renderTemplate`<button class="w-12 h-12 border border-[var(--color-border)] rounded text-sm font-medium hover:border-brand-600 hover:text-brand-600 transition-colors"> ${talla} </button>`)} </div> </div> <!-- Selector de color --> <div class="mt-6"> <h3 class="text-sm font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3"> ${t.product.color} </h3> <div class="flex gap-3"> <button class="w-8 h-8 rounded-full bg-black ring-2 ring-offset-2 ring-brand-600" title="Negro"></button> <button class="w-8 h-8 rounded-full bg-amber-800 hover:ring-2 ring-offset-2 ring-brand-600" title="Marrón"></button> <button class="w-8 h-8 rounded-full bg-gray-200 border hover:ring-2 ring-offset-2 ring-brand-600" title="Blanco"></button> </div> </div> <!-- Botón añadir al carrito --> <button class="mt-8 w-full py-4 bg-brand-600 text-white font-medium text-sm uppercase tracking-wider rounded hover:bg-brand-700 transition-colors"> ${t.shop.addToCart} </button> <!-- Detalles --> <div class="mt-8 border-t border-[var(--color-border)] pt-8 space-y-4 text-sm text-[var(--color-text-secondary)]"> <div class="flex justify-between"> <span>${t.shop.freeShipping}</span> <span>${t.shop.freeShippingCondition}</span> </div> <div class="flex justify-between"> <span>${t.shop.returns}</span> <span>${t.shop.returnsDays}</span> </div> </div> </div> </div> </div> </section>  `, "footer": ($$result2) => renderTemplate`${renderComponent($$result2, "Footer", $$Footer, { "slot": "footer" })}`, "header": ($$result2) => renderTemplate`${renderComponent($$result2, "Header", $$Header, { "slot": "header" })}` })}`;
+}, "/home/jose/Escritorio/zapatos/frontend/src/pages/tienda/[slug].astro", void 0);
+
+const $$file = "/home/jose/Escritorio/zapatos/frontend/src/pages/tienda/[slug].astro";
+const $$url = "/tienda/[slug]";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$slug,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };

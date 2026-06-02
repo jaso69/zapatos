@@ -1,0 +1,27 @@
+import { c as createComponent } from './astro-component_pxVsneAM.mjs';
+import 'piccolore';
+import { I as renderTemplate, u as maybeRenderHead } from './sequence_C3O65D5N.mjs';
+import { r as renderComponent } from './entrypoint_BEZGWQoG.mjs';
+import { $ as $$MainLayout, g as getTranslations, a as $$Header, b as $$Footer } from './Footer_GgtG1gMF.mjs';
+
+const $$Nosotros = createComponent(($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$props, $$slots);
+  Astro2.self = $$Nosotros;
+  const lang = Astro2.locals.lang || "es";
+  const t = getTranslations(lang);
+  return renderTemplate`${renderComponent($$result, "MainLayout", $$MainLayout, { "title": `${t.about.title} | ZAPATOS` }, { "default": ($$result2) => renderTemplate`  ${maybeRenderHead()}<section class="py-12 md:py-16"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <!-- Hero --> <div class="text-center mb-16"> <h1 class="text-4xl md:text-5xl font-heading font-bold text-[var(--color-text)]"> ${t.about.title} </h1> <p class="mt-4 text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto"> ${t.about.subtitle} </p> </div> <!-- Historia --> <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20"> <div class="aspect-[4/3] bg-[var(--color-surface)] rounded-lg flex items-center justify-center text-[var(--color-text-secondary)]"> <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path> </svg> </div> <div> <h2 class="text-2xl md:text-3xl font-heading font-bold text-[var(--color-text)] mb-4"> ${t.about.traditionTitle} </h2> <p class="text-[var(--color-text-secondary)] leading-relaxed mb-4"> ${t.about.traditionText1} </p> <p class="text-[var(--color-text-secondary)] leading-relaxed"> ${t.about.traditionText2} </p> </div> </div> <!-- Valores --> <div class="grid grid-cols-1 md:grid-cols-3 gap-8"> <div class="text-center p-8"> <div class="w-16 h-16 mx-auto mb-4 bg-brand-100 rounded-full flex items-center justify-center"> <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path> </svg> </div> <h3 class="text-lg font-heading font-bold text-[var(--color-text)] mb-2">${t.about.qualityTitle}</h3> <p class="text-sm text-[var(--color-text-secondary)]"> ${t.about.qualityText} </p> </div> <div class="text-center p-8"> <div class="w-16 h-16 mx-auto mb-4 bg-brand-100 rounded-full flex items-center justify-center"> <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path> </svg> </div> <h3 class="text-lg font-heading font-bold text-[var(--color-text)] mb-2">${t.about.designTitle}</h3> <p class="text-sm text-[var(--color-text-secondary)]"> ${t.about.designText} </p> </div> <div class="text-center p-8"> <div class="w-16 h-16 mx-auto mb-4 bg-brand-100 rounded-full flex items-center justify-center"> <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> </div> <h3 class="text-lg font-heading font-bold text-[var(--color-text)] mb-2">${t.about.sustainTitle}</h3> <p class="text-sm text-[var(--color-text-secondary)]"> ${t.about.sustainText} </p> </div> </div> </div> </section>  `, "footer": ($$result2) => renderTemplate`${renderComponent($$result2, "Footer", $$Footer, { "slot": "footer" })}`, "header": ($$result2) => renderTemplate`${renderComponent($$result2, "Header", $$Header, { "slot": "header" })}` })}`;
+}, "/home/jose/Escritorio/zapatos/frontend/src/pages/nosotros.astro", void 0);
+
+const $$file = "/home/jose/Escritorio/zapatos/frontend/src/pages/nosotros.astro";
+const $$url = "/nosotros";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Nosotros,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
