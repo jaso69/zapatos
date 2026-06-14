@@ -1,5 +1,5 @@
 /* Fuentes */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
@@ -19,16 +19,34 @@
   --color-brand-900: #583024;
   --color-brand-950: #321811;
 
+  /* Acento dorado/latón envejecido */
+  --color-accent-50: #fbf7ec;
+  --color-accent-100: #f5ecd0;
+  --color-accent-200: #ecd9a2;
+  --color-accent-300: #dfc079;
+  --color-accent-400: #d4ad5f;
+  --color-accent-500: #c9a961;
+  --color-accent-600: #b08c3f;
+  --color-accent-700: #8a6c2f;
+  --color-accent-800: #6b5424;
+  --color-accent-900: #4a3a18;
+
   --font-heading: 'Playfair Display', serif;
   --font-body: 'Inter', sans-serif;
+  --font-accent: 'Cormorant Garamond', serif;
 
   /* Colores para tema claro */
   --color-bg: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-text: #111827;
-  --color-text-secondary: #6b7280;
-  --color-border: #e5e7eb;
-  --color-surface: #f3f4f6;
+  --color-bg-secondary: #faf5f0;
+  --color-text: #321811;
+  --color-text-secondary: #6b5443;
+  --color-border: #e8dcc8;
+  --color-surface: #f5ecd9;
+
+  /* Acento semántico */
+  --color-accent: #c9a961;
+  --color-accent-soft: #ecd9a2;
+  --color-accent-deep: #8a6c2f;
 }
 
 @layer base {
@@ -41,12 +59,15 @@
   }
 
   :root.dark {
-    --color-bg: #111827;
-    --color-bg-secondary: #1f2937;
-    --color-text: #f9fafb;
-    --color-text-secondary: #9ca3af;
-    --color-border: #374151;
-    --color-surface: #1f2937;
+    --color-bg: #1a1410;
+    --color-bg-secondary: #211812;
+    --color-text: #faf5f0;
+    --color-text-secondary: #c9b8a5;
+    --color-border: #3a2a20;
+    --color-surface: #251a14;
+    --color-accent: #d4ad5f;
+    --color-accent-soft: #8a6c2f;
+    --color-accent-deep: #ecd9a2;
   }
 
   body {
@@ -58,6 +79,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+    color: var(--color-text);
   }
 
   .animate-on-scroll {
@@ -70,4 +92,673 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ============================================
+   UTILIDADES EDITORIALES — Sanvin
+   ============================================ */
+
+/* Kicker: pequeño label sobre headings, estilo editorial */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--color-accent-deep);
+}
+.kicker::before,
+.kicker::after {
+  content: '';
+  display: inline-block;
+  width: 1.75rem;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.6;
+}
+.kicker--single::before {
+  display: none;
+}
+.kicker--single::after {
+  display: none;
+}
+.kicker--left::after {
+  display: none;
+}
+
+/* Divisor decorativo dorado con punto central */
+.gold-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 5rem;
+  height: 1rem;
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-accent), transparent);
+}
+.gold-divider::after {
+  background: linear-gradient(to right, var(--color-accent), transparent, transparent);
+}
+.gold-divider span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 0.5rem;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+}
+
+/* Texto de acento editorial italic */
+.accent-italic {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Cita editorial con comilla decorativa */
+.editorial-quote {
+  position: relative;
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.editorial-quote::before {
+  content: '\201C';
+  position: absolute;
+  top: -2.5rem;
+  left: -1rem;
+  font-family: var(--font-heading);
+  font-size: 7rem;
+  line-height: 1;
+  color: var(--color-accent);
+  opacity: 0.25;
+  font-style: italic;
+  pointer-events: none;
+}
+
+/* Drop cap */
+.dropcap::first-letter {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 4.5rem;
+  line-height: 0.85;
+  float: left;
+  padding: 0.35rem 0.75rem 0 0;
+  color: var(--color-accent-deep);
+}
+
+/* Borde inferior costura: emula puntadas a mano */
+.stitched-border {
+  position: relative;
+}
+.stitched-border::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    var(--color-accent) 0,
+    var(--color-accent) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  background-size: 12px 1px;
+  background-repeat: repeat-x;
+  opacity: 0.7;
+}
+
+/* Subrayado dorado decorativo */
+.gold-underline {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.15rem;
+}
+.gold-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.7;
+}
+
+/* Texturas táctiles: grano papel sutil */
+.texture-paper {
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(50, 24, 17, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(50, 24, 17, 0.02) 1px, transparent 1px);
+  background-size: 8px 8px, 12px 12px;
+}
+
+/* Grano cuero — más denso */
+.texture-leather {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(201, 169, 97, 0.04) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 80% 70%, rgba(201, 169, 97, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.025) 0.5px, transparent 0.5px);
+  background-size: 14px 14px, 10px 10px, 6px 6px;
+}
+
+/* Badge dorado para productos premium */
+.gold-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-accent-deep);
+  background: var(--color-bg);
+  border: 1px solid var(--color-accent);
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px rgba(50, 24, 17, 0.08);
+}
+.gold-badge::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  background: var(--color-accent);
+  border-radius: 50%;
+}
+
+/* Botón fill animation izquierda-derecha (sustituye scale en CTAs editoriales) */
+.btn-fill {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-fill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-brand-700);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
+  z-index: -1;
+}
+.btn-fill:hover::before {
+  transform: translateX(0);
+}
+
+/* Flecha desplazable en enlaces editoriales */
+.arrow-slide {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.arrow-slide svg {
+  transition: transform 0.35s cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+.arrow-slide:hover svg {
+  transform: translateX(0.4rem);
+}
+
+/* Subrayado animado nav */
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.5rem;
+  height: 1px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+.nav-underline:hover::after,
+.nav-underline.is-active::after {
+  transform: scaleX(1);
+}
+.nav-underline.is-active::after {
+  background: var(--color-accent);
+  height: 2px;
+}
+
+/* Anillo dorado para avatares */
+.gold-ring {
+  box-shadow: 0 0 0 1px var(--color-bg), 0 0 0 2px var(--color-accent);
+}
+
+/* Ken Burns suave para imágenes hero/carousel (se aplica al hover de grupo) */
+@keyframes kenburns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.08) translate(-1%, -1%); }
+}
+.kenburns-hover:hover img,
+.group:hover .kenburns {
+  animation: kenburns 6s ease-out forwards;
+}
+
+/* Reveal slide-up para palabras del hero */
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translateY(110%);
+    clip-path: inset(0 0 100% 0);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+.reveal-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.reveal-word > span {
+  display: inline-block;
+  animation: reveal-up 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  opacity: 0;
+}
+
+/* Brillo dorado en badges al pasar el mouse */
+@keyframes gold-shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.gold-shine {
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-soft) 0%,
+    var(--color-accent) 50%,
+    var(--color-accent-soft) 100%
+  );
+  background-size: 200% 100%;
+  animation: gold-shine 3s linear infinite;
+}
+
+/* Marca de agua de logo gigante (decoración hero) */
+.watermark {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-accent);
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.04em;
+}
+
+/* Scroll indicator vertical lateral */
+.scroll-label {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--color-text-secondary);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Numeración editorial (01, 02, 03) */
+.editorial-num {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--color-accent);
+  font-size: 2.5rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Vertical gold line (decoración) */
+.gold-line-vertical {
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--color-accent), transparent);
+}
+
+/* ============================================
+   FASE 3 — Pulido joyería
+   ============================================ */
+
+/* ---------- Focus rings dorados (accesibilidad) ---------- */
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+input:focus-visible {
+  outline-offset: 0;
+}
+
+/* ---------- Reduced motion support ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-word > span {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .animate-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .carousel-track {
+    animation: none !important;
+  }
+  .quality-seal {
+    animation: none !important;
+  }
+}
+
+/* ---------- Dark mode "cuero oscuro" refinamientos ---------- */
+:root.dark .watermark {
+  opacity: 0.08;
+  color: var(--color-accent);
+}
+:root.dark .texture-paper {
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(212, 173, 95, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(212, 173, 95, 0.02) 1px, transparent 1px);
+}
+:root.dark .texture-leather {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(212, 173, 95, 0.05) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 80% 70%, rgba(212, 173, 95, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(212, 173, 95, 0.03) 0.5px, transparent 0.5px);
+}
+:root.dark .gold-badge {
+  background: var(--color-bg);
+  color: var(--color-accent);
+}
+:root.dark .stitched-border::after {
+  opacity: 0.5;
+}
+:root.dark .editorial-quote::before {
+  opacity: 0.18;
+}
+:root.dark .dropcap::first-letter {
+  color: var(--color-accent);
+}
+:root.dark .btn-fill::before {
+  background: var(--color-accent);
+}
+:root.dark .btn-fill:hover {
+  color: var(--color-brand-950);
+}
+:root.dark .gold-ring {
+  box-shadow: 0 0 0 1px var(--color-bg), 0 0 0 2px var(--color-accent);
+}
+/* Viñeta sutil en hero dark */
+:root.dark .hero-vignette {
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+}
+/* Logo en footer y header en dark */
+:root.dark .invert-on-light {
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+}
+
+/* ---------- Page Loader (línea oro arriba) ---------- */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-accent-soft), var(--color-accent), var(--color-accent-deep));
+  z-index: 9999;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease 0.3s;
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(201, 169, 97, 0.4);
+}
+.page-loader.is-loading {
+  width: 80%;
+}
+.page-loader.is-done {
+  width: 100%;
+  opacity: 0;
+}
+
+/* ---------- Cursor personalizado (desktop only) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .custom-cursor-enabled {
+    cursor: none;
+  }
+  .custom-cursor-enabled a,
+  .custom-cursor-enabled button,
+  .custom-cursor-enabled input,
+  .custom-cursor-enabled textarea,
+  .custom-cursor-enabled select,
+  .custom-cursor-enabled [role="button"] {
+    cursor: none;
+  }
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                height 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                background-color 0.25s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s ease,
+                opacity 0.3s ease;
+    opacity: 0.7;
+  }
+  .cursor-hovering .cursor-dot {
+    width: 0;
+    height: 0;
+  }
+  .cursor-hovering .cursor-ring {
+    width: 56px;
+    height: 56px;
+    border-color: var(--color-accent);
+    opacity: 1;
+    background: rgba(201, 169, 97, 0.08);
+  }
+  .cursor-hidden .cursor-dot,
+  .cursor-hidden .cursor-ring {
+    opacity: 0;
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+/* ---------- Ken Burns en imagen hero ---------- */
+@keyframes kenburns-hero {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate(-1.5%, -1%);
+  }
+}
+.kenburns-hero {
+  animation: kenburns-hero 20s ease-out forwards;
+}
+
+/* ---------- Sello de calidad rotativo ---------- */
+@keyframes seal-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.quality-seal {
+  animation: seal-rotate 30s linear infinite;
+}
+.quality-seal:hover {
+  animation-play-state: paused;
+}
+
+/* ---------- Toast notification ---------- */
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  max-width: calc(100vw - 2rem);
+}
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-accent);
+  border-left-width: 3px;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  min-width: 280px;
+  max-width: 420px;
+  box-shadow: 0 10px 30px -10px rgba(50, 24, 17, 0.25);
+  transform: translateY(20px);
+  opacity: 0;
+  animation: toast-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.toast.is-leaving {
+  animation: toast-out 0.3s ease-in forwards;
+}
+.toast-icon {
+  flex-shrink: 0;
+  color: var(--color-accent-deep);
+}
+.toast-message {
+  flex: 1;
+  line-height: 1.4;
+}
+.toast-message .toast-title {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--color-accent-deep);
+  margin-bottom: 0.125rem;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes toast-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(20px); }
+}
+
+/* ---------- Card hover refinements (testimonials/values/pilares) ---------- */
+.card-jewel {
+  position: relative;
+  transition: border-color 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+}
+.card-jewel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-accent);
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-jewel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-accent);
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+}
+.card-jewel:hover::before,
+.card-jewel:hover::after {
+  width: 100%;
+}
+.card-jewel:hover {
+  transform: translateY(-4px);
+}
+
+/* ---------- Refined contact icon circles glow on hover ---------- */
+.contact-circle {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.contact-circle::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--color-accent);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: scale(0.85);
+  pointer-events: none;
+}
+.contact-circle:hover::after {
+  opacity: 0.4;
+  transform: scale(1);
 }

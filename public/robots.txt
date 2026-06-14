@@ -1,0 +1,19 @@
+# Robots.txt for Sanvin Shoemakers
+User-agent: *
+Allow: /
+
+# Disallow admin and API areas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /pedido-confirmado
+
+# Don't block CSS/JS resources needed for rendering
+Allow: /styles/
+Allow: /scripts/
+
+# Sitemap location
+Sitemap: https://sanvinshoemakers.com/sitemap.xml
+
+# Crawl delay (optional, for very large sites)
+# Crawl-delay: 1

@@ -6,79 +6,223 @@ import Footer from '../components/layout/Footer.astro';
 
 const lang: Language = Astro.locals.lang || 'es';
 const t = getTranslations(lang);
+
+// Countries from Medusa region (Europe)
+const countries = [
+  { code: 'es', name: 'España' },
+  { code: 'de', name: 'Alemania' },
+  { code: 'fr', name: 'Francia' },
+  { code: 'it', name: 'Italia' },
+  { code: 'gb', name: 'Reino Unido' },
+  { code: 'dk', name: 'Dinamarca' },
+  { code: 'se', name: 'Suecia' },
+];
 ---
 
-<MainLayout title={`${t.checkout.title} | ZAPATOS`}>
+<MainLayout title={`${t.checkout.title} | Sanvin Shoemakers`} noindex={true}>
   <Header slot="header" />
 
-  <section class="py-12 md:py-16">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-heading font-bold text-[var(--color-text)] mb-8">
-        {t.checkout.title}
+  <!-- Hero pequeño -->
+  <section class="relative bg-[var(--color-bg-secondary)] texture-paper py-12 md:py-16 overflow-hidden">
+    <div class="relative max-w-4xl mx-auto px-6 text-center">
+      <span class="kicker">{t.kickers.collection}</span>
+      <h1 class="mt-4 text-3xl md:text-4xl font-heading font-medium text-[var(--color-text)] leading-tight">
+        {t.checkout.title.split(' ').slice(0, -1).join(' ')} <span class="accent-italic text-[var(--color-accent-deep)]">{t.checkout.title.split(' ').slice(-1)}</span>
       </h1>
+      <div class="gold-divider mt-4"><span></span></div>
+    </div>
+  </section>
 
-      <!-- Checkout form (se conectará con React + Stripe/PayPal) -->
-      <div id="checkout-container">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <!-- Datos de envío -->
-          <div>
-            <h2 class="text-xl font-heading font-semibold mb-6 text-[var(--color-text)]">{t.checkout.shippingTitle}</h2>
-            <form class="space-y-4">
+  <section class="py-12 md:py-20 bg-[var(--color-bg)]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Estado vacío -->
+      <div id="checkout-empty" class="hidden text-center py-16">
+        <div class="relative inline-flex items-center justify-center mb-8">
+          <div class="absolute inset-0 rounded-full bg-[var(--color-accent)]/10 blur-2xl"></div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="relative h-20 w-20 text-[var(--color-accent-deep)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+        <p class="accent-italic text-2xl text-[var(--color-text)]">{t.checkout.emptyCart}</p>
+        <a href="/carrito" class="btn-fill arrow-slide inline-flex items-center justify-center gap-3 mt-8 px-9 py-4 bg-[var(--color-brand-700)] text-white font-medium text-xs uppercase tracking-[0.25em] hover:text-white transition-colors duration-300">
+          <span>{t.checkout.backToCart}</span>
+        </a>
+      </div>
+
+      <!-- Formulario checkout -->
+      <div id="checkout-form" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <!-- Columna izquierda: formulario -->
+          <div class="lg:col-span-7">
+            <form id="checkout-data-form" class="space-y-8">
+              <!-- Contacto -->
               <div>
-                <label class="block text-sm font-medium text-[var(--color-text)] mb-1">{t.checkout.shippingName}</label>
-                <input type="text" class="w-full px-4 py-2 border border-[var(--color-border)] rounded bg-[var(--color-bg)] text-[var(--color-text)] focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-[var(--color-text)] mb-1">{t.checkout.shippingEmail}</label>
-                <input type="email" class="w-full px-4 py-2 border border-[var(--color-border)] rounded bg-[var(--color-bg)] text-[var(--color-text)] focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-[var(--color-text)] mb-1">{t.checkout.shippingAddress}</label>
-                <input type="text" class="w-full px-4 py-2 border border-[var(--color-border)] rounded bg-[var(--color-bg)] text-[var(--color-text)] focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none" />
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-[var(--color-text)] mb-1">{t.checkout.shippingCity}</label>
-                  <input type="text" class="w-full px-4 py-2 border border-[var(--color-border)] rounded bg-[var(--color-bg)] text-[var(--color-text)] focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none" />
+                <h2 class="text-sm font-medium uppercase tracking-[0.2em] text-[var(--color-text)] mb-4">
+                  {t.contact.email}
+                </h2>
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.email}</label>
+                    <input type="email" id="email" required autocomplete="email"
+                      class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                      placeholder="tu@email.com" />
+                  </div>
                 </div>
-                <div>
-                  <label class="block text-sm font-medium text-[var(--color-text)] mb-1">{t.checkout.shippingPostal}</label>
-                  <input type="text" class="w-full px-4 py-2 border border-[var(--color-border)] rounded bg-[var(--color-bg)] text-[var(--color-text)] focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none" />
+              </div>
+
+              <div class="gold-divider"><span></span></div>
+
+              <!-- Envío -->
+              <div>
+                <h2 class="text-sm font-medium uppercase tracking-[0.2em] text-[var(--color-text)] mb-4">
+                  {t.checkout.shippingTitle}
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.firstName}</label>
+                    <input type="text" id="first-name" required autocomplete="given-name"
+                      class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                      placeholder="Juan" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.lastName}</label>
+                    <input type="text" id="last-name" required autocomplete="family-name"
+                      class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                      placeholder="García" />
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.address}</label>
+                  <input type="text" id="address" required autocomplete="street-address"
+                    class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                    placeholder="Calle Mayor, 123" />
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+                  <div class="col-span-2 sm:col-span-1">
+                    <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.postalCode}</label>
+                    <input type="text" id="postal-code" required autocomplete="postal-code"
+                      class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                      placeholder="28001" />
+                  </div>
+                  <div class="col-span-2 sm:col-span-2">
+                    <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.city}</label>
+                    <input type="text" id="city" required autocomplete="address-level2"
+                      class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                      placeholder="Madrid" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                  <div>
+                    <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.country}</label>
+                    <select id="country" required autocomplete="country"
+                      class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] focus:border-[var(--color-accent)] focus:outline-none transition-colors">
+                      {countries.map(c => (
+                        <option value={c.code}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.province}</label>
+                    <input type="text" id="province" autocomplete="address-level1"
+                      class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                      placeholder="Madrid" />
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <label class="block text-[11px] uppercase tracking-[0.15em] text-[var(--color-text-secondary)] mb-2">{t.checkout.phone}</label>
+                  <input type="tel" id="phone" required autocomplete="tel"
+                    class="w-full px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-accent)] focus:outline-none transition-colors"
+                    placeholder="+34 600 000 000" />
+                </div>
+              </div>
+
+              <div class="gold-divider"><span></span></div>
+
+              <!-- Método de envío -->
+              <div>
+                <h2 class="text-sm font-medium uppercase tracking-[0.2em] text-[var(--color-text)] mb-4">
+                  {t.checkout.shippingMethod}
+                </h2>
+                <div id="shipping-options" class="space-y-3">
+                  <!-- Se renderiza via JS -->
+                  <div class="p-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-center">
+                    <span class="text-sm text-[var(--color-text-secondary)]">Cargando opciones...</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gold-divider"><span></span></div>
+
+              <!-- Método de pago -->
+              <div>
+                <h2 class="text-sm font-medium uppercase tracking-[0.2em] text-[var(--color-text)] mb-4">
+                  {t.checkout.paymentTitle}
+                </h2>
+                <div class="space-y-3">
+                  <label class="flex items-center gap-4 p-4 bg-[var(--color-surface)] border border-[var(--color-accent)] rounded-lg cursor-pointer">
+                    <input type="radio" name="payment" value="pp_system_default" checked class="accent-[var(--color-accent)]" />
+                    <div class="flex-1">
+                      <span class="text-sm font-medium text-[var(--color-text)]">{t.checkout.bankTransfer}</span>
+                      <p class="text-xs text-[var(--color-text-secondary)] mt-1">{t.checkout.paymentInstructions}</p>
+                    </div>
+                  </label>
                 </div>
               </div>
             </form>
-
-            <!-- Método de pago -->
-            <h2 class="text-xl font-heading font-semibold mt-8 mb-6 text-[var(--color-text)]">{t.checkout.paymentTitle}</h2>
-            <div class="space-y-3">
-              <label class="flex items-center gap-3 p-4 border border-[var(--color-border)] rounded cursor-pointer hover:border-brand-600 transition-colors">
-                <input type="radio" name="payment" value="stripe" checked class="text-brand-600" />
-                <span class="font-medium text-[var(--color-text)]">{t.checkout.paymentCard}</span>
-                <span class="text-xs text-[var(--color-text-secondary)] ml-auto">Stripe</span>
-              </label>
-              <label class="flex items-center gap-3 p-4 border border-[var(--color-border)] rounded cursor-pointer hover:border-brand-600 transition-colors">
-                <input type="radio" name="payment" value="paypal" class="text-brand-600" />
-                <span class="font-medium text-[var(--color-text)]">{t.checkout.paymentPaypal}</span>
-              </label>
-            </div>
           </div>
 
-          <!-- Resumen del pedido -->
-          <div>
-            <h2 class="text-xl font-heading font-semibold mb-6 text-[var(--color-text)]">{t.checkout.orderSummary}</h2>
-            <div class="bg-[var(--color-surface)] rounded-lg p-6">
-              <p class="text-[var(--color-text-secondary)] text-center py-8">
-                El resumen se cargará con los datos del carrito
-              </p>
-              <div class="border-t border-[var(--color-border)] pt-4 mt-4">
-                <div class="flex justify-between font-semibold text-lg text-[var(--color-text)]">
-                  <span>{t.checkout.orderTotal}</span>
-                  <span>0,00{t.common.price}</span>
+          <!-- Columna derecha: resumen -->
+          <div class="lg:col-span-5">
+            <div class="sticky top-24 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 md:p-8">
+              <h2 class="text-sm font-medium uppercase tracking-[0.2em] text-[var(--color-text)] mb-6">
+                {t.checkout.orderSummary}
+              </h2>
+
+              <div id="order-items" class="space-y-4 mb-6">
+                <!-- Items via JS -->
+              </div>
+
+              <div class="gold-divider"><span></span></div>
+
+              <div class="mt-6 space-y-3">
+                <div class="flex items-center justify-between text-sm text-[var(--color-text-secondary)]">
+                  <span>{t.checkout.subtotal}</span>
+                  <span id="summary-subtotal">—</span>
+                </div>
+                <div class="flex items-center justify-between text-sm text-[var(--color-text-secondary)]">
+                  <span>{t.checkout.shipping}</span>
+                  <span id="summary-shipping">—</span>
+                </div>
+                <div class="flex items-center justify-between text-sm text-[var(--color-text-secondary)]">
+                  <span>{t.checkout.tax}</span>
+                  <span id="summary-tax">—</span>
+                </div>
+                <div class="gold-divider my-4"><span></span></div>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm uppercase tracking-[0.2em] text-[var(--color-text)] font-medium">{t.checkout.orderTotal}</span>
+                  <span id="summary-total" class="font-heading text-2xl text-[var(--color-accent-deep)]">—</span>
                 </div>
               </div>
-              <button class="mt-6 w-full py-3 bg-brand-600 text-white font-medium text-sm uppercase tracking-wider rounded hover:bg-brand-700 transition-colors">
-                {t.checkout.confirmOrder}
+
+              <button id="confirm-order-btn" type="button"
+                class="btn-fill arrow-slide w-full mt-8 inline-flex items-center justify-center gap-3 min-h-[56px] px-8 py-4 bg-[var(--color-brand-700)] text-white font-medium text-xs uppercase tracking-[0.25em] hover:text-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span id="confirm-text">{t.checkout.confirmOrder}</span>
+                <svg id="confirm-icon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+                <svg id="confirm-spinner" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 hidden animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
               </button>
+
+              <p id="checkout-error" class="mt-4 text-sm text-red-500 hidden text-center"></p>
+
+              <div class="mt-6 flex items-center justify-center gap-2 text-[var(--color-text-secondary)]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span class="text-xs">{t.checkout.securePayment}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -88,3 +232,310 @@ const t = getTranslations(lang);
 
   <Footer slot="footer" />
 </MainLayout>
+
+  <script define:vars={{ freeShipping: t.checkout.freeShipping }}>
+  window.checkoutT = {
+    freeShipping: freeShipping
+  };
+  (function() {
+    function formatPrice(amount, currency) {
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: currency || 'EUR',
+      }).format(amount);
+    }
+
+    async function getCart(cartId) {
+      try {
+        const response = await fetch('/api/cart/get', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId: cartId }),
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.cart || null;
+      } catch (e) { return null; }
+    }
+
+    async function getShippingOptions(cartId) {
+      try {
+        const response = await fetch('/api/checkout/shipping-options', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId: cartId }),
+        });
+        if (!response.ok) return [];
+        const data = await response.json();
+        return data.shipping_options || [];
+      } catch (e) { return []; }
+    }
+
+    async function updateCart(cartId, email, address) {
+      try {
+        const response = await fetch('/api/checkout/update-cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cartId: cartId,
+            email: email,
+            shipping_address: address,
+            billing_address: address,
+          }),
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.cart || null;
+      } catch (e) { return null; }
+    }
+
+    async function addShipping(cartId, optionId) {
+      try {
+        const response = await fetch('/api/checkout/add-shipping', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId: cartId, optionId: optionId }),
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.cart || null;
+      } catch (e) { return null; }
+    }
+
+    async function initiatePayment(cartId, providerId) {
+      try {
+        const response = await fetch('/api/checkout/initiate-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId: cartId, providerId: providerId }),
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data;
+      } catch (e) { return null; }
+    }
+
+    async function completeCart(cartId) {
+      try {
+        const response = await fetch('/api/checkout/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartId: cartId }),
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data;
+      } catch (e) { return null; }
+    }
+
+    let cart = null;
+    let shippingOptions = [];
+    let selectedShipping = null;
+
+    async function loadCheckout() {
+      const cartId = localStorage.getItem('cart_id');
+      if (!cartId) {
+        document.getElementById('checkout-empty').classList.remove('hidden');
+        return;
+      }
+
+      cart = await getCart(cartId);
+      if (!cart || !cart.items || cart.items.length === 0) {
+        document.getElementById('checkout-empty').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('checkout-form').classList.remove('hidden');
+
+      // Render items
+      const itemsContainer = document.getElementById('order-items');
+      let html = '';
+      cart.items.forEach(function(item) {
+        const img = item.thumbnail || item.product?.thumbnail || '';
+        const title = item.title || item.product?.title || '';
+        const meta = item.metadata || {};
+        const metaTalla = meta.talla || '';
+        const metaColor = meta.color || '';
+        const qty = item.quantity || 1;
+        const price = item.unit_price || 0;
+        const total = price * qty;
+        const currency = cart.currency_code || 'EUR';
+
+        html += '<div class="flex gap-3">';
+        html += '<div class="w-16 h-16 flex-shrink-0 bg-white rounded-lg overflow-hidden">';
+        if (img) {
+          html += '<img src="' + img.replace('http://localhost:9000', 'https://sanvin.rpg-docu.com') + '" alt="' + title + '" class="w-full h-full object-contain" />';
+        } else {
+          html += '<div class="w-full h-full flex items-center justify-center text-[var(--color-accent)]/30"><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17c0-1 1-2 3-2h2c1.5 0 3-1 4-2l3-3c1-1 2-1 3-1h1c1 0 2 1 2 2v3c0 2-1 3-3 3H4c-.5 0-1-.5-1-1zM6 15v2M10 13v2" /></svg></div>';
+        }
+        html += '</div>';
+        html += '<div class="flex-1 min-w-0">';
+        html += '<h4 class="text-sm font-medium text-[var(--color-text)] truncate">' + title + '</h4>';
+        if (metaTalla || metaColor) {
+          html += '<p class="text-xs text-[var(--color-text-secondary)] mt-0.5">';
+          if (metaTalla) html += 'Talla ' + metaTalla;
+          if (metaTalla && metaColor) html += ' · ';
+          if (metaColor) html += metaColor;
+          html += '</p>';
+        }
+        html += '<p class="text-xs text-[var(--color-text-secondary)] mt-0.5">' + qty + ' x ' + formatPrice(price, currency) + '</p>';
+        html += '</div>';
+        html += '<div class="text-sm font-medium text-[var(--color-text)]">' + formatPrice(total, currency) + '</div>';
+        html += '</div>';
+      });
+      itemsContainer.innerHTML = html;
+
+      // Update totals
+      document.getElementById('summary-subtotal').textContent = formatPrice(cart.subtotal || 0, cart.currency_code);
+      const shippingTotal = cart.shipping_total || 0;
+      document.getElementById('summary-shipping').textContent = shippingTotal === 0 ? window.checkoutT.freeShipping : formatPrice(shippingTotal, cart.currency_code);
+      document.getElementById('summary-tax').textContent = formatPrice(cart.tax_total || 0, cart.currency_code);
+      document.getElementById('summary-total').textContent = formatPrice(cart.total || 0, cart.currency_code);
+
+      // Load shipping options
+      shippingOptions = await getShippingOptions(cartId);
+      const shippingContainer = document.getElementById('shipping-options');
+      if (shippingOptions.length === 0) {
+        shippingContainer.innerHTML = '<div class="p-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-center"><span class="text-sm text-[var(--color-text-secondary)]">No hay opciones de envío disponibles</span></div>';
+      } else {
+        let sHtml = '';
+        shippingOptions.forEach(function(opt, i) {
+          const price = opt.calculated_price?.calculated_amount || opt.amount || 0;
+          const currency = opt.calculated_price?.currency_code || 'EUR';
+          const checked = i === 0 ? 'checked' : '';
+          selectedShipping = i === 0 ? opt.id : selectedShipping;
+          sHtml += '<label class="flex items-center gap-4 p-4 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg cursor-pointer hover:border-[var(--color-accent)] transition-colors">';
+          sHtml += '<input type="radio" name="shipping" value="' + opt.id + '" ' + checked + ' class="shipping-option accent-[var(--color-accent)]" />';
+          sHtml += '<div class="flex-1">';
+          sHtml += '<span class="text-sm font-medium text-[var(--color-text)]">' + opt.name + '</span>';
+          if (opt.type?.description) {
+            sHtml += '<p class="text-xs text-[var(--color-text-secondary)] mt-0.5">' + opt.type.description + '</p>';
+          }
+          sHtml += '</div>';
+          const priceLabel = price === 0 ? window.checkoutT.freeShipping : formatPrice(price, currency);
+          sHtml += '<span class="text-sm font-medium text-[var(--color-accent-deep)]">' + priceLabel + '</span>';
+          sHtml += '</label>';
+        });
+        shippingContainer.innerHTML = sHtml;
+
+        // Attach shipping selection listeners
+        shippingContainer.querySelectorAll('.shipping-option').forEach(function(radio) {
+          radio.addEventListener('change', function() {
+            selectedShipping = radio.value;
+          });
+        });
+      }
+    }
+
+    // Confirm order
+    const confirmBtn = document.getElementById('confirm-order-btn');
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', async function() {
+        const errorEl = document.getElementById('checkout-error');
+        errorEl.classList.add('hidden');
+
+        // Validate form
+        const email = document.getElementById('email').value.trim();
+        const firstName = document.getElementById('first-name').value.trim();
+        const lastName = document.getElementById('last-name').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const postalCode = document.getElementById('postal-code').value.trim();
+        const country = document.getElementById('country').value;
+        const province = document.getElementById('province').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone) {
+          errorEl.textContent = 'Por favor, complete todos los campos obligatorios.';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+
+        if (!selectedShipping) {
+          errorEl.textContent = 'Por favor, seleccione un método de envío.';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+
+        const cartId = localStorage.getItem('cart_id');
+        if (!cartId || !cart) {
+          errorEl.textContent = 'Error: carrito no encontrado.';
+          errorEl.classList.remove('hidden');
+          return;
+        }
+
+        // Loading state
+        confirmBtn.disabled = true;
+        document.getElementById('confirm-icon').classList.add('hidden');
+        document.getElementById('confirm-spinner').classList.remove('hidden');
+        document.getElementById('confirm-text').textContent = 'Procesando...';
+
+        // 1. Update cart with email and address
+        const addressData = {
+          first_name: firstName,
+          last_name: lastName,
+          address_1: address,
+          city: city,
+          postal_code: postalCode,
+          country_code: country,
+          province: province,
+          phone: phone,
+        };
+
+        const updatedCart = await updateCart(cartId, email, addressData);
+        if (!updatedCart) {
+          errorEl.textContent = 'Error al guardar los datos. Inténtelo de nuevo.';
+          errorEl.classList.remove('hidden');
+          confirmBtn.disabled = false;
+          document.getElementById('confirm-icon').classList.remove('hidden');
+          document.getElementById('confirm-spinner').classList.add('hidden');
+          document.getElementById('confirm-text').textContent = 'Confirmar pedido';
+          return;
+        }
+
+        // 2. Add shipping method
+        const cartWithShipping = await addShipping(cartId, selectedShipping);
+        if (!cartWithShipping) {
+          errorEl.textContent = 'Error al seleccionar envío. Inténtelo de nuevo.';
+          errorEl.classList.remove('hidden');
+          confirmBtn.disabled = false;
+          document.getElementById('confirm-icon').classList.remove('hidden');
+          document.getElementById('confirm-spinner').classList.add('hidden');
+          document.getElementById('confirm-text').textContent = 'Confirmar pedido';
+          return;
+        }
+
+        // 3. Initiate payment session
+        const payment = await initiatePayment(cartId, 'pp_system_default');
+        if (!payment) {
+          errorEl.textContent = 'Error al iniciar el pago. Inténtelo de nuevo.';
+          errorEl.classList.remove('hidden');
+          confirmBtn.disabled = false;
+          document.getElementById('confirm-icon').classList.remove('hidden');
+          document.getElementById('confirm-spinner').classList.add('hidden');
+          document.getElementById('confirm-text').textContent = 'Confirmar pedido';
+          return;
+        }
+
+        // 4. Complete cart
+        const result = await completeCart(cartId);
+        if (!result || result.type !== 'order' || !result.order) {
+          errorEl.textContent = 'Error al completar el pedido. Inténtelo de nuevo.';
+          errorEl.classList.remove('hidden');
+          confirmBtn.disabled = false;
+          document.getElementById('confirm-icon').classList.remove('hidden');
+          document.getElementById('confirm-spinner').classList.add('hidden');
+          document.getElementById('confirm-text').textContent = 'Confirmar pedido';
+          return;
+        }
+
+        // Success!
+        localStorage.removeItem('cart_id');
+        const order = result.order;
+        window.location.href = '/pedido-confirmado?order=' + encodeURIComponent(order.id) + '&email=' + encodeURIComponent(email);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCheckout);
+  })();
+</script>

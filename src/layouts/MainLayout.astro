@@ -1,18 +1,29 @@
 ---
 import '../styles/global.css';
 import Assistant from '../components/Assistant';
+import { getTranslations, type Language } from '../i18n';
 
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  structuredData?: Record<string, any>[];
 }
 
-const { title, description = 'Tienda de zapatos de diseño Sanvin' } = Astro.props;
+const { title, description = 'Tienda de zapatos de diseño Sanvin. Calzado artesanal hecho a mano en España.', ogImage = '/og-image.webp', noindex = false, structuredData } = Astro.props;
+const lang: Language = Astro.locals.lang || 'es';
+const t = getTranslations(lang);
 const brandTitle = title.includes('Sanvin') ? title : `Sanvin | ${title}`;
+
+const ogTitle = title.includes('Sanvin') ? title : `Sanvin Shoemakers | ${title}`;
+const canonicalUrl = `https://sanvinshoemakers.com${Astro.url.pathname}`;
+
+const skipLinkText = lang === 'es' ? 'Saltar al contenido principal' : lang === 'en' ? 'Skip to main content' : 'Zum Hauptinhalt springen';
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang} dir="ltr">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/webp" href="/logo.webp" />
@@ -20,6 +31,66 @@ const brandTitle = title.includes('Sanvin') ? title : `Sanvin | ${title}`;
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{brandTitle}</title>
+
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="preconnect" href="https://sanvin.rpg-docu.com" />
+    <link rel="dns-prefetch" href="https://sanvin.rpg-docu.com" />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <meta name="robots" content="index, follow" />}
+    <meta name="author" content="Sanvin Shoemakers" />
+
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Sanvin Shoemakers" />
+    <meta property="og:locale" content={lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_GB' : 'de_DE'} />
+    <meta property="og:image" content={`https://sanvinshoemakers.com${ogImage}`} />
+    <meta property="og:image:alt" content={ogTitle} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`https://sanvinshoemakers.com${ogImage}`} />
+    <meta name="twitter:image:alt" content={ogTitle} />
+
+    <link rel="alternate" hreflang="es" href={`https://sanvinshoemakers.com/es${Astro.url.pathname.replace(/^\/(es|en|de)/, '')}`} />
+    <link rel="alternate" hreflang="en" href={`https://sanvinshoemakers.com/en${Astro.url.pathname.replace(/^\/(es|en|de)/, '')}`} />
+    <link rel="alternate" hreflang="de" href={`https://sanvinshoemakers.com/de${Astro.url.pathname.replace(/^\/(es|en|de)/, '')}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://sanvinshoemakers.com${Astro.url.pathname.replace(/^\/(es|en|de)/, '')}`} />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Sanvin Shoemakers",
+        "url": "https://sanvinshoemakers.com",
+        "logo": "https://sanvinshoemakers.com/logo.webp",
+        "description": "Tienda de zapatos de diseño artesanal hechos a mano en España",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Madrid",
+          "addressCountry": "ES"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+34-634-304-435",
+          "contactType": "customer service",
+          "availableLanguage": ["Spanish", "English", "German"]
+        },
+        "sameAs": [
+          "https://www.instagram.com/sanvin.shoes",
+          "https://www.tiktok.com/@sanvin.shoes"
+        ]
+      }
+    </script>
+
+    {structuredData?.map((data) => (
+      <script type="application/ld+json" set:html={JSON.stringify(data)} />
+    ))}
 
     <script is:inline>
       (function() {
@@ -32,17 +103,34 @@ const brandTitle = title.includes('Sanvin') ? title : `Sanvin | ${title}`;
     </script>
   </head>
   <body class="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-200">
+    <!-- Page loader gold line -->
+    <div id="page-loader" class="page-loader" aria-hidden="true"></div>
+
+    <!-- Custom cursor (desktop only) -->
+    <div id="cursor-ring" class="cursor-ring" aria-hidden="true"></div>
+    <div id="cursor-dot" class="cursor-dot" aria-hidden="true"></div>
+
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-brand-600 focus:text-white focus:px-4 focus:py-2 focus:rounded">
+      {skipLinkText}
+    </a>
+
     <div class="w-full max-w-7xl mx-auto">
       <slot name="header" />
-      <main class="flex-1">
+      <main id="main-content" class="flex-1">
         <slot />
       </main>
       <slot name="footer" />
     </div>
 
-    <Assistant client:load />
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true" role="status"></div>
+
+    <Assistant client:load t={t.chat.salesAssistant} lang={lang} />
 
     <script>
+      // ============================================
+      // Intersection Observer (animate-on-scroll)
+      // ============================================
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -57,6 +145,124 @@ const brandTitle = title.includes('Sanvin') ? title : `Sanvin | ${title}`;
       document.querySelectorAll('.animate-on-scroll').forEach((el) => {
         observer.observe(el);
       });
+
+      // ============================================
+      // Page loader gold line
+      // ============================================
+      const loader = document.getElementById('page-loader');
+      if (loader) {
+        loader.classList.add('is-loading');
+        const finish = () => {
+          loader.classList.remove('is-loading');
+          loader.classList.add('is-done');
+          setTimeout(() => {
+            loader.classList.remove('is-done');
+            loader.style.width = '0%';
+          }, 600);
+        };
+        if (document.readyState === 'complete') {
+          finish();
+        } else {
+          window.addEventListener('load', finish, { once: true });
+        }
+        // Loader on link clicks
+        document.addEventListener('click', (e) => {
+          const target = (e.target as HTMLElement)?.closest('a');
+          if (target && target.href && !target.target && !target.hasAttribute('download')) {
+            const url = new URL(target.href, window.location.href);
+            if (url.origin === window.location.origin && url.pathname !== window.location.pathname) {
+              loader.classList.add('is-loading');
+            }
+          }
+        });
+      }
+
+      // ============================================
+      // Custom cursor (desktop only)
+      // ============================================
+      const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!isTouchDevice && !prefersReducedMotion) {
+        document.documentElement.classList.add('custom-cursor-enabled');
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          if (cursorDot) {
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+          }
+        });
+
+        // Smooth ring follow with rAF
+        function animateRing() {
+          ringX += (mouseX - ringX) * 0.18;
+          ringY += (mouseY - ringY) * 0.18;
+          if (cursorRing) {
+            cursorRing.style.left = ringX + 'px';
+            cursorRing.style.top = ringY + 'px';
+          }
+          requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        // Hover state on interactive elements
+        const addHoverListeners = () => {
+          document.querySelectorAll('a, button, input, textarea, select, [role="button"]').forEach((el) => {
+            el.addEventListener('mouseenter', () => document.documentElement.classList.add('cursor-hovering'));
+            el.addEventListener('mouseleave', () => document.documentElement.classList.remove('cursor-hovering'));
+          });
+        };
+        addHoverListeners();
+
+        // Hide cursor on leave
+        document.addEventListener('mouseleave', () => document.documentElement.classList.add('cursor-hidden'));
+        document.addEventListener('mouseenter', () => document.documentElement.classList.remove('cursor-hidden'));
+
+        // Re-bind when DOM changes (e.g. Astro view transitions)
+        const mo = new MutationObserver(() => addHoverListeners());
+        mo.observe(document.body, { childList: true, subtree: true });
+      } else {
+        // Remove cursor elements on touch devices
+        document.getElementById('cursor-dot')?.remove();
+        document.getElementById('cursor-ring')?.remove();
+      }
+
+      // ============================================
+      // Toast notification API (global)
+      // ============================================
+      const toastContainer = document.getElementById('toast-container');
+      function showToast(opts: { title?: string; message: string; duration?: number }) {
+        if (!toastContainer) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.setAttribute('role', 'status');
+        toast.innerHTML = `
+          <div class="toast-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div class="toast-message">
+            ${opts.title ? `<div class="toast-title">${opts.title}</div>` : ''}
+            <div>${opts.message}</div>
+          </div>
+        `;
+        toastContainer.appendChild(toast);
+        const duration = opts.duration ?? 3500;
+        setTimeout(() => {
+          toast.classList.add('is-leaving');
+          setTimeout(() => toast.remove(), 300);
+        }, duration);
+      }
+      // Expose globally
+      (window as any).sanvinToast = showToast;
     </script>
   </body>
 </html>

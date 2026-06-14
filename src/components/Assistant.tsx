@@ -1,28 +1,61 @@
 import { useState, useRef, useEffect } from 'react';
 
+export interface SalesAssistantStrings {
+  greeting: string;
+  placeholder: string;
+  typing: string;
+  error: string;
+  title: string;
+  subtitle: string;
+  openLabel: string;
+  closeLabel: string;
+  viewProduct: string;
+}
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
 }
 
-const INITIAL_MESSAGE: Message = {
-  role: 'assistant',
-  content: 'Buenos días, soy su asesor virtual de Sanvin Shoemakers. Es un placer ayudarle a encontrar el zapato perfecto. ¿En qué puedo ayudarle hoy?',
-  timestamp: new Date(),
-};
-
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+interface Props {
+  t: SalesAssistantStrings;
+  lang: string;
 }
 
-export default function Assistant() {
+function formatTime(date: Date, lang: string): string {
+  return date.toLocaleTimeString(lang === 'en' ? 'en-GB' : lang === 'de' ? 'de-DE' : 'es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function renderMarkdownLinks(text: string): string {
+  // Convert markdown links [text](url) to HTML
+  let html = text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="chat-link underline decoration-[var(--color-accent)] underline-offset-2 text-[var(--color-accent-deep)] hover:text-[var(--color-brand-700)] transition-colors">$1</a>');
+  return html;
+}
+
+export default function Assistant({ t, lang }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setMessages([{
+      role: 'assistant',
+      content: t.greeting,
+      timestamp: new Date(),
+    }]);
+    setInitialized(true);
+  }, [t.greeting]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -51,7 +84,10 @@ export default function Assistant() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: messages.map(m => ({ role: m.role, content: m.content })).concat([{ role: 'user', content: userMessage.content }]) }),
+        body: JSON.stringify({
+          messages: messages.map(m => ({ role: m.role, content: m.content })).concat([{ role: 'user', content: userMessage.content }]),
+          lang,
+        }),
       });
 
       if (!response.ok) throw new Error('Error en la respuesta');
@@ -96,7 +132,7 @@ export default function Assistant() {
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: 'Lo siento, ha habido un error. Por favor, inténtelo de nuevo.', timestamp: new Date() },
+        { role: 'assistant', content: t.error, timestamp: new Date() },
       ]);
     } finally {
       setIsLoading(false);
@@ -115,8 +151,9 @@ export default function Assistant() {
       {/* Floating button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-brand-600 text-white shadow-lg hover:shadow-xl hover:bg-brand-700 transition-all duration-300 flex items-center justify-center"
-        aria-label="Asistente de Sanvin"
+        aria-label={isOpen ? t.closeLabel : t.openLabel}
+        aria-expanded={isOpen}
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 min-w-[44px] min-h-[44px] rounded-full bg-brand-600 text-white shadow-lg hover:shadow-xl hover:bg-brand-700 transition-all duration-300 flex items-center justify-center"
       >
         {isOpen ? (
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -145,8 +182,8 @@ export default function Assistant() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-heading font-semibold">Asesor Sanvin</h3>
-                <p className="text-brand-200 text-xs">Zapatos artesanales · Always here to help</p>
+                <h3 className="font-heading font-semibold">{t.title}</h3>
+                <p className="text-brand-200 text-xs">{t.subtitle}</p>
               </div>
             </div>
           </div>
@@ -154,22 +191,23 @@ export default function Assistant() {
 
         {/* Messages */}
         <div className="h-72 overflow-y-auto p-4 space-y-4 bg-gray-200">
-          {messages.map((msg, i) => (
+          {initialized && messages.map((msg, i) => (
             <div
               key={i}
               className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
             >
-              <div
-                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-brand-600 text-white rounded-br-sm'
-                    : 'bg-white text-gray-800 rounded-bl-sm shadow-sm'
-                }`}
-              >
-                {msg.content}
-              </div>
+              {msg.role === 'assistant' ? (
+                <div
+                  className="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed bg-white text-gray-800 rounded-bl-sm shadow-sm"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdownLinks(msg.content) }}
+                />
+              ) : (
+                <div className="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed bg-brand-600 text-white rounded-br-sm">
+                  {msg.content}
+                </div>
+              )}
               <span className={`text-[10px] mt-1 px-1 ${msg.role === 'user' ? 'text-brand-600' : 'text-[var(--color-text-secondary)]'}`}>
-                {formatTime(msg.timestamp)}
+                {formatTime(msg.timestamp, lang)}
               </span>
             </div>
           ))}
@@ -183,7 +221,7 @@ export default function Assistant() {
                 </div>
               </div>
               <span className="text-[10px] mt-1 px-1 text-[var(--color-text-secondary)]">
-                Escribiendo...
+                {t.typing}
               </span>
             </div>
           )}
@@ -198,7 +236,7 @@ export default function Assistant() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Escriba su mensaje..."
+              placeholder={t.placeholder}
               rows={1}
               className="flex-1 resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent text-[var(--color-text)] placeholder-[var(--color-text-secondary)]"
             />
@@ -213,7 +251,7 @@ export default function Assistant() {
             </button>
           </div>
           <p className="text-[10px] text-center text-[var(--color-text-secondary)] mt-2">
-            Soy tu asesor virtual de confianza
+            {t.subtitle}
           </p>
         </form>
       </div>

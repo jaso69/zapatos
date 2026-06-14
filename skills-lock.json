@@ -60,6 +60,12 @@
       "source": "stripe/ai",
       "sourceType": "autoskills-registry",
       "computedHash": "017906619cae467ebfac534bed0dc25d1c157dd55bfb0530fb5d38d2418b426c"
+    },
+    "website-to-video": {
+      "source": "heygen-com/hyperframes",
+      "sourceType": "github",
+      "skillPath": "skills/website-to-video/SKILL.md",
+      "computedHash": "89921c8b4fed4f4aa6f78359d8c4f1689cc2d439946f7ff2e8a6ad5b58ac20f8"
     }
   }
 }

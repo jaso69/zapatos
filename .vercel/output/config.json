@@ -20,7 +20,47 @@
 			"dest": "_render"
 		},
 		{
+			"src": "^/api/cart/add/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/cart/create/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/cart/get/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/cart/remove/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/cart/update/?$",
+			"dest": "_render"
+		},
+		{
 			"src": "^/api/chat/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/checkout/add-shipping/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/checkout/complete/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/checkout/initiate-payment/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/checkout/shipping-options/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/api/checkout/update-cart/?$",
 			"dest": "_render"
 		},
 		{
@@ -37,6 +77,18 @@
 		},
 		{
 			"src": "^/nosotros/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/pedido-confirmado/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/personalizacion/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/sitemap\\.xml$",
 			"dest": "_render"
 		},
 		{

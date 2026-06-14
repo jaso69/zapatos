@@ -4,256 +4,763 @@ import MainLayout from '../layouts/MainLayout.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Carousel from '../components/Carousel';
+import { getProducts, formatPrice } from '../lib/medusa';
 
 const lang: Language = Astro.locals.lang || 'es';
 const t = getTranslations(lang);
+
+// Para el reveal animado del título: dividir en palabras y aplicar acento italic a la última
+const heroTitleWords = t.hero.title.split(' ');
+const heroLastWord = heroTitleWords.pop() || '';
+const heroFirstPart = heroTitleWords.join(' ');
+
+const featuredProducts = await getProducts(3);
 ---
 
-  <MainLayout title="Sanvin | Calzado de Diseño">
+<MainLayout title="Sanvin | Calzado de Diseño">
   <Header slot="header" />
 
-  <!-- Hero con background -->
-  <section class="relative min-h-[70vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden">
-    <!-- Background image -->
-    <div class="absolute inset-0 z-0 bg-[var(--color-bg)]">
-      <div
-        class="w-full h-full bg-cover bg-center opacity-20 dark:opacity-10"
-        style="background-image: url('/backend-img.webp'); filter: blur(2px) saturate(0.8); opacity: 0.4;"
-      ></div>
-      <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-bg)]/50 via-[var(--color-bg)]/70 to-[var(--color-bg)]"></div>
+  <!-- ============================================
+       HERO Editorial — Asimétrico 50/50
+       ============================================ -->
+  <section class="relative min-h-[88vh] md:min-h-screen overflow-hidden bg-[var(--color-bg)]">
+    <div class="absolute inset-0 grid grid-cols-1 md:grid-cols-12">
+      <!-- IZQUIERDA: contenido editorial -->
+      <div class="relative col-span-1 md:col-span-7 flex items-center bg-[var(--color-bg)] z-10 order-2 md:order-1">
+        <!-- Marca de agua gigante a la izquierda -->
+        <div class="absolute -left-12 md:-left-20 top-1/2 -translate-y-1/2 pointer-events-none overflow-hidden">
+          <span class="watermark block leading-none whitespace-nowrap" style="font-size: clamp(8rem, 22vw, 22rem)">Sanvin</span>
+        </div>
+
+        <!-- EST label vertical -->
+        <div class="hidden md:flex absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 flex-col items-center gap-4">
+          <div class="w-px h-20 bg-[var(--color-accent)]/60"></div>
+          <span class="scroll-label text-[var(--color-accent-deep)]">{t.editorial.estLabel} {t.editorial.estYear}</span>
+          <div class="w-px h-20 bg-[var(--color-accent)]/60"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-2xl mx-auto md:mx-0 md:ml-24 lg:ml-32 px-6 md:px-8 py-16 md:py-24">
+          <!-- Kicker -->
+          <div class="reveal-word" style="animation-delay: 0.1s">
+            <span class="kicker">{t.kickers.atelier}</span>
+          </div>
+
+          <!-- Línea oro decorativa -->
+          <div class="mt-10 mb-6 flex items-center gap-4 reveal-word" style="animation-delay: 0.2s">
+            <div class="w-20 h-px bg-[var(--color-accent)]"></div>
+            <span class="text-[10px] uppercase tracking-[0.4em] text-[var(--color-text-secondary)]">{t.editorial.handmade}</span>
+          </div>
+
+          <!-- Título: cada palabra animada con clip-path -->
+          <h1 class="font-heading font-medium leading-[0.95] tracking-tight text-[var(--color-text)] mt-4" style="font-size: clamp(2.5rem, 7vw, 5.5rem)">
+            {heroFirstPart.split(' ').map((word, i) => (
+              <span class="reveal-word mr-2 md:mr-3">
+                <span style={`animation-delay: ${0.3 + i * 0.1}s`}>{word}</span>
+              </span>
+            ))}
+            <br class="hidden md:inline" />
+            <span class="reveal-word">
+              <span class="accent-italic text-[var(--color-accent-deep)]" style={`animation-delay: ${0.3 + heroFirstPart.split(' ').length * 0.1}s`}>{heroLastWord}</span>
+            </span>
+          </h1>
+
+          <!-- Subtitle -->
+          <div class="reveal-word mt-10" style="animation-delay: 1.0s">
+            <p class="text-base md:text-lg text-[var(--color-text-secondary)] max-w-lg leading-relaxed">
+              {t.hero.subtitle}
+            </p>
+          </div>
+
+          <!-- CTAs -->
+          <div class="mt-12 flex flex-col sm:flex-row gap-5 sm:items-center reveal-word" style="animation-delay: 1.15s">
+            <a
+              href="/tienda"
+              class="btn-fill arrow-slide inline-flex items-center justify-center px-9 py-4 bg-[var(--color-brand-700)] text-white font-medium text-xs uppercase tracking-[0.25em] hover:text-white transition-colors duration-300"
+            >
+              <span>{t.hero.ctaCollection}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a
+              href="/nosotros"
+              class="arrow-slide group inline-flex items-center gap-3 px-2 py-2 text-[var(--color-text)] font-medium text-xs uppercase tracking-[0.25em] hover:text-[var(--color-accent-deep)] transition-colors duration-300"
+            >
+              <span class="border-b border-[var(--color-accent)] pb-1">{t.hero.ctaStory}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Tagline manuscrita -->
+          <div class="reveal-word mt-16" style="animation-delay: 1.3s">
+            <p class="accent-italic text-base md:text-lg text-[var(--color-text-secondary)]/80">— {t.editorial.signature}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DERECHA: imagen nítida full-bleed -->
+      <div class="relative col-span-1 md:col-span-5 order-1 md:order-2 overflow-hidden bg-[var(--color-bg-secondary)] min-h-[40vh] md:min-h-full">
+        <!-- Imagen principal con parallax + Ken Burns -->
+        <div id="hero-parallax" class="absolute inset-0 will-change-transform">
+          <img
+            src="/carrousel/z1.webp"
+            alt="Zapato artesanal Oxford de Sanvin Shoemakers, calzado de lujo hecho a mano en España"
+            class="kenburns-hero w-full h-full object-cover"
+            width="1200"
+            height="1600"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <!-- Overlay sutil para integración cromática -->
+          <div class="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-[var(--color-bg)]/30 md:to-[var(--color-bg)]/40"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-brand-950)]/40 via-transparent to-transparent"></div>
+          <!-- Viñeta dark mode -->
+          <div class="hero-vignette absolute inset-0 hidden dark:block"></div>
+        </div>
+
+        <!-- Decoración: borde costura vertical izquierda (solo desktop) -->
+        <div class="hidden md:block absolute top-12 bottom-12 left-0 w-px">
+          <div class="h-full" style="background-image: linear-gradient(to bottom, var(--color-accent) 0, var(--color-accent) 6px, transparent 6px, transparent 12px); background-size: 1px 12px; background-repeat: repeat-y; opacity: 0.6;"></div>
+        </div>
+
+        <!-- Etiqueta "Nº" sobre imagen -->
+        <div class="absolute top-8 right-8 z-10 flex items-center gap-3">
+          <span class="text-[10px] uppercase tracking-[0.3em] text-[var(--color-brand-50)]/80">{t.editorial.crafted}</span>
+          <div class="w-8 h-px bg-[var(--color-accent)]"></div>
+        </div>
+
+        <!-- Sello de calidad rotativo -->
+        <div class="absolute top-1/2 right-6 md:right-8 -translate-y-1/2 z-10 w-24 h-24 md:w-32 md:h-32 pointer-events-auto" aria-label="Sello de calidad Sanvin">
+          <svg class="quality-seal w-full h-full text-[var(--color-accent)] drop-shadow-[0_4px_12px_rgba(50,24,17,0.3)]" viewBox="0 0 200 200" fill="none">
+            <!-- Anillo exterior -->
+            <circle cx="100" cy="100" r="96" stroke="currentColor" stroke-width="1" opacity="0.4" />
+            <!-- Anillo interior -->
+            <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="0.5" opacity="0.6" />
+            <!-- Texto curvado superior -->
+            <defs>
+              <path id="circle-top" d="M 100,100 m -72,0 a 72,72 0 1,1 144,0" />
+              <path id="circle-bottom" d="M 100,100 m -72,0 a 72,72 0 1,0 144,0" />
+            </defs>
+            <text font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="currentColor" letter-spacing="4">
+              <textPath href="#circle-top" startOffset="50%" text-anchor="middle">SANVIN · SHOEMAKERS</textPath>
+            </text>
+            <text font-family="Inter, sans-serif" font-size="9" font-weight="500" fill="currentColor" letter-spacing="3" opacity="0.7">
+              <textPath href="#circle-bottom" startOffset="50%" text-anchor="middle">HANDCRAFTED · MADRID</textPath>
+            </text>
+            <!-- Centro -->
+            <g transform="translate(100, 100)">
+              <text font-family="Playfair Display, serif" font-style="italic" font-size="34" fill="currentColor" text-anchor="middle" dominant-baseline="central">S</text>
+              <line x1="-22" y1="-30" x2="22" y2="-30" stroke="currentColor" stroke-width="0.8" />
+              <line x1="-22" y1="30" x2="22" y2="30" stroke="currentColor" stroke-width="0.8" />
+              <text font-family="Inter, sans-serif" font-size="6" font-weight="600" fill="currentColor" text-anchor="middle" y="46" letter-spacing="2">EST. 1968</text>
+            </g>
+            <!-- Estrellas decorativas -->
+            <g fill="currentColor">
+              <circle cx="100" cy="14" r="1.5" />
+              <circle cx="100" cy="186" r="1.5" />
+              <circle cx="14" cy="100" r="1.5" />
+              <circle cx="186" cy="100" r="1.5" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Modelo info bottom -->
+        <div class="absolute bottom-8 left-8 z-10">
+          <p class="accent-italic text-sm text-[var(--color-brand-50)] mb-1">Oxford Classic</p>
+          <p class="text-[10px] uppercase tracking-[0.3em] text-[var(--color-brand-50)]/70">Nº 01 — Collection</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Contenido hero -->
-    <div class="relative z-10 text-center px-4 pt-8 pb-12 md:pt-12 md:pb-16 max-w-4xl mx-auto">
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-[var(--color-text)] leading-tight">
-        {t.hero.title}
-      </h1>
-      <p class="mt-6 text-lg md:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto">
-        {t.hero.subtitle}
-      </p>
+    <!-- Indicador scroll vertical inferior centro -->
+    <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 bottom-8 z-20 flex-col items-center gap-3">
+      <span class="scroll-label">{t.kickers.scroll}</span>
+      <div class="w-px h-14 bg-[var(--color-text-secondary)]/30 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-5 bg-[var(--color-accent)] animate-[scroll-tick_2s_ease-in-out_infinite]"></div>
+      </div>
+    </div>
+  </section>
 
-      <!-- Botones CTA -->
-      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+  <style>
+    @keyframes scroll-tick {
+      0% { transform: translateY(-100%); opacity: 0; }
+      30% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateY(400%); opacity: 0; }
+    }
+  </style>
+
+  <script>
+    // Parallax sutil en imagen hero
+    const heroParallax = document.getElementById('hero-parallax');
+    let ticking = false;
+    function updateParallax() {
+      if (!heroParallax) return;
+      const scrolled = window.scrollY;
+      const offset = Math.min(scrolled * 0.25, 200);
+      heroParallax.style.transform = `translateY(${offset}px) scale(${1 + scrolled * 0.0003})`;
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+  </script>
+
+  <!-- ============================================
+       Carrousel infinito
+       ============================================ -->
+  <section class="relative w-full overflow-hidden bg-[var(--color-bg-secondary)] texture-paper py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 text-center">
+      <span class="kicker">{t.kickers.collection}</span>
+    </div>
+    <Carousel client:load />
+  </section>
+
+  <!-- ============================================
+       Brand text — cita editorial asimétrica
+       ============================================ -->
+  <section class="relative py-20 md:py-32 bg-[var(--color-bg)] animate-on-scroll overflow-hidden">
+    <!-- Decoración: número editorial lateral -->
+    <div class="hidden lg:block absolute top-16 right-12 editorial-num text-[6rem] opacity-30">01</div>
+
+    <div class="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+      <!-- Columna lateral -->
+      <div class="lg:col-span-4">
+        <span class="kicker">{t.kickers.heritage}</span>
+        <h2 class="mt-6 text-3xl md:text-4xl font-heading font-medium leading-tight text-[var(--color-text)]"
+          set:html={t.homepage.brandTextTitle}
+        />
+        <div class="mt-6 flex items-center gap-3">
+          <div class="w-12 h-px bg-[var(--color-accent)]"></div>
+          <span class="text-xs uppercase tracking-[0.3em] text-[var(--color-text-secondary)]">Madrid</span>
+        </div>
+      </div>
+
+      <!-- Columna texto -->
+      <div class="lg:col-span-8 relative">
+        <p class="editorial-quote text-2xl md:text-3xl text-[var(--color-text)] leading-relaxed">
+          {t.homepage.brandText1}
+        </p>
+        <p class="mt-10 text-base md:text-lg text-[var(--color-text-secondary)] leading-relaxed dropcap">
+          {t.homepage.brandText2}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Featured products
+       ============================================ -->
+  <section class="relative py-20 md:py-28 bg-[var(--color-bg-secondary)] texture-paper animate-on-scroll overflow-hidden">
+    <div class="hidden lg:block absolute top-16 left-12 editorial-num text-[6rem] opacity-30">02</div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="kicker">{t.kickers.collection}</span>
+        <h2 class="mt-6 text-4xl md:text-5xl font-heading font-medium text-[var(--color-text)]">
+          {t.featured.title}
+        </h2>
+        <div class="gold-divider mt-6"><span></span></div>
+        <p class="mt-6 accent-italic text-lg text-[var(--color-text-secondary)]">{t.featured.subtitle}</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+        {featuredProducts.length === 0 && (
+          <div class="col-span-full text-center py-12">
+            <p class="accent-italic text-lg text-[var(--color-text-secondary)]">
+              Próximamente nuevos modelos
+            </p>
+          </div>
+        )}
+        {featuredProducts.map((product, i) => {
+          const mainImage = product.images[0];
+          const badges = [t.editorial.new, t.editorial.handmade, t.editorial.limited];
+          return (
+            <a href={`/tienda/${product.handle}`} class="group block">
+              {/* Imagen / placeholder */}
+              <div class="relative w-full aspect-square bg-white rounded-2xl overflow-hidden mb-5 shadow-sm hover:shadow-xl transition-shadow duration-500">
+                {/* Badge dorado */}
+                <div class="absolute top-4 left-4 z-10">
+                  <span class="gold-badge">{badges[i % badges.length]}</span>
+                </div>
+                {/* Número edición */}
+                <div class="absolute top-4 right-4 z-10 accent-italic text-xs text-white/90 drop-shadow-lg">
+                  Nº {String(i + 1).padStart(3, '0')}
+                </div>
+                {/* Imagen real o placeholder */}
+                {mainImage ? (
+                  <div class="w-full h-full flex items-center justify-center p-4">
+                    <img
+                      src={mainImage.url}
+                      alt={product.title}
+                      class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
+                      loading="lazy"
+                      width="400"
+                      height="400"
+                    />
+                  </div>
+                ) : (
+                  <div class="w-full h-full flex items-center justify-center text-[var(--color-accent)]/40 group-hover:scale-105 transition-transform duration-700 ease-out">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 17c0-1 1-2 3-2h2c1.5 0 3-1 4-2l3-3c1-1 2-1 3-1h1c1 0 2 1 2 2v3c0 2-1 3-3 3H4c-.5 0-1-.5-1-1zM6 15v2M10 13v2" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div class="px-2">
+                <p class="accent-italic text-sm text-[var(--color-accent-deep)] mb-1">
+                  {product.collection?.title || t.kickers.collection}
+                </p>
+                <h3 class="font-heading font-medium text-xl text-[var(--color-text)] group-hover:text-[var(--color-accent-deep)] transition-colors duration-300">
+                  {product.title}
+                </h3>
+                <div class="mt-3 flex items-center justify-between">
+                  {product.price ? (
+                    <span class="font-heading text-lg text-[var(--color-accent-deep)]">
+                      {formatPrice(product.price.amount, product.price.currency_code)}
+                    </span>
+                  ) : (
+                    <span class="text-xs uppercase tracking-[0.2em] text-[var(--color-text-secondary)]">
+                      {t.product.priceOnRequest}
+                    </span>
+                  )}
+                  <span class="arrow-slide text-xs uppercase tracking-[0.25em] text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent-deep)] transition-colors duration-300">
+                    Ver detalles
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+
+      <div class="text-center mt-16">
         <a
           href="/tienda"
-          class="inline-flex items-center justify-center px-8 py-4 bg-brand-600 text-white font-medium text-sm uppercase tracking-wider rounded hover:bg-brand-700 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          class="arrow-slide inline-flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-[var(--color-text)] hover:text-[var(--color-accent-deep)] transition-colors duration-300 border-b border-[var(--color-accent)] pb-2"
         >
-          <span>{t.hero.ctaCollection}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          {t.featured.cta}
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
         </a>
-        <a
-          href="/nosotros"
-          class="inline-flex items-center justify-center px-8 py-4 border-2 border-[var(--color-text)] text-[var(--color-text)] font-medium text-sm uppercase tracking-wider rounded hover:bg-[var(--color-text)] hover:text-[var(--color-bg)] transition-all duration-300"
-        >
-          {t.hero.ctaStory}
-        </a>
       </div>
     </div>
-
-    <!-- Indicador scroll -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[var(--color-text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-      </svg>
-    </div>
   </section>
 
-  <div class="h-6 bg-[var(--color-bg)]"></div>
+  <!-- ============================================
+       Craftsmanship — numeración editorial
+       ============================================ -->
+  <section class="relative py-20 md:py-28 bg-[var(--color-bg)] animate-on-scroll overflow-hidden">
+    <div class="hidden lg:block absolute top-16 right-12 editorial-num text-[6rem] opacity-30">03</div>
 
-  <!-- Carrousel infinito -->
-  <section class="relative w-full overflow-hidden">
-    <Carousel />
-  </section>
-
-  <div class="h-8 bg-[var(--color-bg)]"></div>
-
-  <!-- Texto descriptivo -->
-  <section class="py-16 md:py-24 bg-[var(--color-bg)] border-t border-b border-[var(--color-border)] animate-on-scroll">
-    <div class="max-w-3xl mx-auto px-4 text-center">
-      <div class="w-20 h-1 bg-brand-600 mx-auto rounded-full"></div>
-      <p class="mt-8 text-lg md:text-xl text-[var(--color-text-secondary)] leading-relaxed">
-        {t.homepage.brandText1}
-      </p>
-      <p class="mt-6 text-lg md:text-xl text-[var(--color-text-secondary)] leading-relaxed">
-        {t.homepage.brandText2}
-      </p>
-    </div>
-  </section>
-
-  <div class="h-8 bg-[var(--color-bg)]"></div>
-
-  <div class="h-8 bg-[var(--color-bg)]"></div>
-
-  <!-- Productos destacados (placeholder) -->
-  <section class="py-16 md:py-24 animate-on-scroll">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-heading font-bold text-[var(--color-text)]">
-          {t.featured.title}
-        </h2>
-        <p class="mt-4 text-[var(--color-text-secondary)]">{t.featured.subtitle}</p>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {[1, 2, 3].map((i) => (
-          <div class="group">
-            <div class="aspect-square bg-[var(--color-surface)] rounded-lg overflow-hidden mb-4">
-              <div class="w-full h-full flex items-center justify-center text-[var(--color-text-secondary)]">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-            <h3 class="font-heading font-semibold text-lg text-[var(--color-text)] group-hover:text-brand-600 transition-colors">
-              {t.shop.productModel} {i}
-            </h3>
-            <p class="mt-1 text-brand-600 font-medium">89,99{t.common.price}</p>
-          </div>
-        ))}
-      </div>
-
-      <div class="text-center mt-12">
-        <a
-          href="/tienda"
-          class="inline-block px-8 py-3 border border-brand-600 text-brand-600 font-medium text-sm uppercase tracking-wider rounded hover:bg-brand-600 hover:text-white transition-colors"
-        >
-          {t.featured.cta}
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sección artesanal -->
-  <section class="py-16 md:py-24 bg-[var(--color-bg)] border-t border-b border-[var(--color-border)] animate-on-scroll">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-heading font-bold text-[var(--color-text)]">
+      <div class="text-center mb-16 max-w-3xl mx-auto">
+        <span class="kicker">{t.kickers.craft}</span>
+        <h2 class="mt-6 text-4xl md:text-5xl font-heading font-medium text-[var(--color-text)] leading-tight">
           {t.homepage.craftTitle}
         </h2>
-        <div class="w-20 h-1 bg-brand-600 mx-auto mt-4 rounded-full"></div>
-        <p class="mt-6 text-lg text-[var(--color-text-secondary)] max-w-3xl mx-auto leading-relaxed">
+        <div class="gold-divider mt-6"><span></span></div>
+        <p class="mt-6 text-base md:text-lg text-[var(--color-text-secondary)] leading-relaxed">
           {t.homepage.craftSubtitle}
         </p>
       </div>
 
-      <div class="max-w-3xl mx-auto">
-        <p class="text-lg font-medium text-[var(--color-text)] mb-4">
+      <div class="max-w-4xl mx-auto">
+        <p class="accent-italic text-xl text-[var(--color-accent-deep)] mb-10 text-center">
           {t.homepage.craftFeaturesTitle}
         </p>
-        <ul class="space-y-2">
-          {t.homepage.craftFeaturesList.map((feature) => (
-            <li class="flex items-start gap-3 text-[var(--color-text-secondary)]">
-              <span class="text-brand-600 mt-1">·</span>
-              <span>{feature}</span>
+
+        <ul class="space-y-0 divide-y divide-[var(--color-border)]">
+          {t.homepage.craftFeaturesList.map((feature, idx) => (
+            <li class="flex items-start gap-6 py-6 group">
+              <span class="editorial-num shrink-0 w-14">{String(idx + 1).padStart(2, '0')}</span>
+              <span class="text-base md:text-lg text-[var(--color-text)] leading-relaxed group-hover:text-[var(--color-accent-deep)] transition-colors duration-300">
+                {feature}
+              </span>
             </li>
           ))}
         </ul>
-        <p class="mt-8 text-lg text-[var(--color-text-secondary)] leading-relaxed">
+
+        <p class="mt-12 text-center text-base md:text-lg text-[var(--color-text-secondary)] leading-relaxed italic max-w-2xl mx-auto">
           {t.homepage.craftClosing}
         </p>
       </div>
     </div>
   </section>
 
-  <div class="h-8 bg-[var(--color-bg)]"></div>
+  <!-- ============================================
+       Galería de Videos — Atelier en Movimiento
+       ============================================ -->
+  <section class="relative py-20 md:py-28 bg-[var(--color-bg)] animate-on-scroll overflow-hidden">
+    <div class="hidden lg:block absolute top-16 left-12 editorial-num text-[6rem] opacity-30">04</div>
 
-  <!-- Testimonios -->
-  <section class="py-16 md:py-24 bg-[var(--color-bg)] animate-on-scroll">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-heading font-bold text-[var(--color-text)]">
-          Lo que dicen nuestros clientes
+      <div class="text-center mb-16">
+        <span class="kicker">{t.kickers.atelier}</span>
+        <h2 class="mt-6 text-4xl md:text-5xl font-heading font-medium text-[var(--color-text)] leading-tight">
+          {t.homepage.videosTitle}
         </h2>
-        <div class="w-20 h-1 bg-brand-600 mx-auto mt-4 rounded-full"></div>
+        <div class="gold-divider mt-6"><span></span></div>
+        <p class="mt-6 accent-italic text-lg text-[var(--color-text-secondary)]">
+          {t.homepage.videosSubtitle}
+        </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-[var(--color-surface)] rounded-lg p-8 text-center">
-          <div class="flex justify-center gap-1 mb-4">
-            {[1,2,3,4,5].map(() => (
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-500" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
-          </div>
-          <p class="text-[var(--color-text-secondary)] italic mb-6">"La calidad de los materiales es excepcional. Llevo mis Sanvin cada día a la oficina y siguen impecables después de meses de uso intensivo."</p>
-          <div class="flex items-center justify-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-brand-200 flex items-center justify-center text-brand-700 font-semibold">CR</div>
-            <div class="text-left">
-              <p class="font-semibold text-[var(--color-text)]">Carlos Ruiz</p>
-              <p class="text-sm text-[var(--color-text-secondary)]">Madrid</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {t.homepage.videosList.map((video, i) => (
+          <div class="group relative bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl overflow-hidden hover:border-[var(--color-accent)]/50 transition-all duration-500 shadow-sm hover:shadow-xl">
+            <div class="relative aspect-video bg-[var(--color-bg-secondary)] overflow-hidden">
+              <video
+                class="w-full h-full object-cover"
+                preload="none"
+                poster={video.poster}
+                loading="lazy"
+                muted
+                playsinline
+                aria-label={video.title}
+                data-video
+              >
+                <source src={video.src} type="video/mp4" />
+              </video>
+              {/* Overlay play button */}
+              <div class="absolute inset-0 flex items-center justify-center bg-[var(--color-brand-950)]/30 group-hover:bg-[var(--color-brand-950)]/50 transition-all duration-300">
+                <button
+                  aria-label={`${t.homepage.playVideo} ${video.title}`}
+                  class="video-play-btn w-16 h-16 rounded-full border border-[var(--color-accent)]/60 flex items-center justify-center text-[var(--color-accent)] bg-[var(--color-bg)]/80 backdrop-blur-sm hover:bg-[var(--color-accent)] hover:text-[var(--color-brand-950)] transition-all duration-300 shadow-lg"
+                  data-video-src={video.src}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+              {/* Número editorial */}
+              <div class="absolute top-4 left-4 z-10">
+                <span class="text-[10px] uppercase tracking-[0.3em] text-white/90 font-medium bg-[var(--color-brand-950)]/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                  Nº {String(i + 1).padStart(3, '0')}
+                </span>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-heading font-medium text-xl text-[var(--color-text)] group-hover:text-[var(--color-accent-deep)] transition-colors duration-300">
+                {video.title}
+              </h3>
+              <p class="mt-2 text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                {video.desc}
+              </p>
             </div>
           </div>
-        </div>
-
-        <div class="bg-[var(--color-surface)] rounded-lg p-8 text-center">
-          <div class="flex justify-center gap-1 mb-4">
-            {[1,2,3,4,5].map(() => (
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-500" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
-          </div>
-          <p class="text-[var(--color-text-secondary)] italic mb-6">"Compré unos Oxford para mi boda y no dejé de recibir cumplidos. El servicio de personalización fue impecable."</p>
-          <div class="flex items-center justify-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-brand-200 flex items-center justify-center text-brand-700 font-semibold">JL</div>
-            <div class="text-left">
-              <p class="font-semibold text-[var(--color-text)]">Javier López</p>
-              <p class="text-sm text-[var(--color-text-secondary)]">Barcelona</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-[var(--color-surface)] rounded-lg p-8 text-center">
-          <div class="flex justify-center gap-1 mb-4">
-            {[1,2,3,4,5].map(() => (
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-500" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
-          </div>
-          <p class="text-[var(--color-text-secondary)] italic mb-6">"Por fin encontré zapatos cómodos desde el primer día. El proceso de compra fue excelente y el envío muy rápido."</p>
-          <div class="flex items-center justify-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-brand-200 flex items-center justify-center text-brand-700 font-semibold">RM</div>
-            <div class="text-left">
-              <p class="font-semibold text-[var(--color-text)]">Roberto Martínez</p>
-              <p class="text-sm text-[var(--color-text-secondary)]">Valencia</p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- Newsletter -->
-  <section class="py-16 md:py-20 bg-[var(--color-surface)] border-t border-[var(--color-border)] animate-on-scroll">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-2xl md:text-3xl font-heading font-bold text-[var(--color-text)]">
-        {t.homepage.newsletterTitle}
+  <!-- ============================================
+       Testimonios — cards premium con borde oro
+       ============================================ -->
+  <section class="relative py-20 md:py-28 bg-[var(--color-bg-secondary)] texture-paper animate-on-scroll overflow-hidden">
+    <div class="hidden lg:block absolute top-16 left-12 editorial-num text-[6rem] opacity-30">05</div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="kicker">{t.kickers.voices}</span>
+        <h2 class="mt-6 text-4xl md:text-5xl font-heading font-medium text-[var(--color-text)]">
+          {t.homepage.testimonialsTitle}
+        </h2>
+        <div class="gold-divider mt-6"><span></span></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {[
+          { initials: 'CR', name: 'Carlos Ruiz', city: 'Madrid', text: 'La calidad de los materiales es excepcional. Llevo mis Sanvin cada día a la oficina y siguen impecables después de meses de uso intensivo.' },
+          { initials: 'JL', name: 'Javier López', city: 'Barcelona', text: 'Compré unos Oxford para mi boda y no dejé de recibir cumplidos. El servicio de personalización fue impecable.' },
+          { initials: 'RM', name: 'Roberto Martínez', city: 'Valencia', text: 'Por fin encontré zapatos cómodos desde el primer día. El proceso de compra fue excelente y el envío muy rápido.' },
+        ].map((tst) => (
+          <article class="relative bg-[var(--color-bg)] border border-[var(--color-accent)]/30 p-8 md:p-10 overflow-hidden card-jewel hover:border-[var(--color-accent)] hover:shadow-[0_20px_40px_-15px_rgba(50,24,17,0.15)]">
+            <!-- Comilla decorativa gigante -->
+            <span class="absolute -top-8 -left-2 font-heading italic text-[10rem] leading-none text-[var(--color-accent)]/15 pointer-events-none select-none" aria-hidden="true">"</span>
+
+            <!-- Estrellas oro -->
+            <div class="relative flex gap-1 mb-6" aria-label="Valoración 5 de 5 estrellas">
+              {[1,2,3,4,5].map(() => (
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-accent)]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+
+            <!-- Texto -->
+            <blockquote class="relative accent-italic text-lg text-[var(--color-text)] leading-relaxed mb-8">
+              <p>{tst.text}</p>
+            </blockquote>
+
+            <!-- Firma -->
+            <footer class="relative flex items-center gap-4 pt-6 border-t border-[var(--color-border)]">
+              <div class="w-12 h-12 rounded-full bg-[var(--color-bg-secondary)] flex items-center justify-center font-heading font-medium text-[var(--color-accent-deep)] gold-ring">
+                {tst.initials}
+              </div>
+              <div>
+                <cite class="font-heading font-medium text-[var(--color-text)] not-italic">{tst.name}</cite>
+                <p class="text-xs uppercase tracking-[0.2em] text-[var(--color-text-secondary)] mt-0.5">{tst.city}</p>
+              </div>
+            </footer>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       Newsletter — cuero oscuro premium
+       ============================================ -->
+  <section class="relative py-24 md:py-32 bg-[var(--color-brand-950)] texture-leather animate-on-scroll overflow-hidden">
+    <!-- Marca de agua -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04]">
+      <span class="font-heading italic text-[20rem] leading-none text-[var(--color-accent)] whitespace-nowrap">Sanvin</span>
+    </div>
+
+    <div class="relative max-w-2xl mx-auto px-6 text-center">
+      <span class="kicker" style="color: var(--color-accent)">{t.kickers.join}</span>
+
+      <h2 class="mt-6 text-3xl md:text-5xl font-heading font-medium text-[var(--color-brand-50)] leading-tight">
+        {t.homepage.newsletterTitle.split(' ').slice(0, -1).join(' ')} <span class="accent-italic" style="color: var(--color-accent)">{t.homepage.newsletterTitle.split(' ').slice(-1)}</span>
       </h2>
-      <p class="mt-4 text-[var(--color-text-secondary)]">
+
+      <div class="gold-divider mt-8"><span></span></div>
+
+      <p class="mt-8 accent-italic text-lg text-[var(--color-brand-100)]/80 max-w-md mx-auto leading-relaxed">
         {t.homepage.newsletterSubtitle}
       </p>
-      <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit={`event.preventDefault(); alert('${t.homepage.newsletterSuccess}');`}>
+
+      <form class="mt-12 flex flex-col sm:flex-row gap-4 sm:gap-6 max-w-md mx-auto" onsubmit={`event.preventDefault(); window.sanvinToast && window.sanvinToast({ title: '${t.kickers.join}', message: '${t.homepage.newsletterSuccess}' }); event.target.reset();`}>
         <input
           type="email"
           placeholder={t.homepage.newsletterPlaceholder}
           required
-          class="flex-1 px-4 py-3 rounded border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent"
+          class="flex-1 px-2 py-3 bg-transparent border-0 border-b border-[var(--color-accent)]/50 text-[var(--color-brand-50)] placeholder:text-[var(--color-brand-100)]/40 placeholder:italic placeholder:accent-italic focus:outline-none focus:border-[var(--color-accent)] transition-colors text-center sm:text-left"
         />
         <button
           type="submit"
-          class="px-6 py-3 bg-brand-600 text-white font-medium text-sm uppercase tracking-wider rounded hover:bg-brand-700 transition-colors"
+          aria-label="Suscribirse al newsletter"
+          class="arrow-slide group inline-flex items-center justify-center gap-2 px-2 py-3 text-xs uppercase tracking-[0.3em] text-[var(--color-accent)] hover:text-[var(--color-brand-50)] transition-colors duration-300 min-h-[44px]"
         >
-          {t.homepage.newsletterButton}
+          <span>{t.homepage.newsletterButton}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
         </button>
       </form>
+
+      <!-- Tagline pequeño -->
+      <p class="mt-16 text-[10px] uppercase tracking-[0.4em] text-[var(--color-brand-100)]/40">
+        {t.editorial.crafted} · {t.editorial.estLabel} {t.editorial.estYear}
+      </p>
     </div>
   </section>
 
-  <div class="h-8 bg-[var(--color-bg)]"></div>
-
   <Footer slot="footer" />
 </MainLayout>
+
+<!-- Video Lightbox Modal -->
+<div id="video-modal" class="video-modal fixed inset-0 z-50 hidden items-center justify-center" aria-hidden="true">
+  <!-- Backdrop con gradiente sutil -->
+  <div class="video-modal-backdrop absolute inset-0 bg-[var(--color-brand-950)]/90 backdrop-blur-xl"></div>
+  
+  <div class="relative w-full max-w-5xl mx-4 video-modal-inner" id="video-modal-content">
+    <!-- Botón cerrar -->
+    <button
+      id="video-modal-close"
+      aria-label="Cerrar video"
+      class="absolute -top-14 right-0 text-[var(--color-brand-100)] hover:text-[var(--color-accent)] transition-all duration-300 hover:rotate-90"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <!-- Video container -->
+    <div class="relative w-full bg-[var(--color-brand-950)] rounded-xl overflow-hidden shadow-[0_0_60px_-15px_rgba(201,169,97,0.3)] border border-[var(--color-accent)]/20">
+      <video
+        id="modal-video"
+        class="w-full h-auto max-h-[80vh]"
+        controls
+        playsinline
+        preload="auto"
+      >
+        <source id="modal-video-source" src="" type="video/mp4" />
+      </video>
+    </div>
+    <!-- Título del video -->
+    <p id="modal-video-title" class="mt-6 text-center text-lg text-[var(--color-brand-100)] accent-italic opacity-0 translate-y-4 transition-all duration-500 delay-200"></p>
+  </div>
+</div>
+
+<style>
+  /* Transiciones elegantes del modal */
+  .video-modal {
+    transition: visibility 0s linear 0.4s;
+  }
+  .video-modal.active {
+    transition: visibility 0s linear 0s;
+  }
+  .video-modal-backdrop {
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .video-modal.active .video-modal-backdrop {
+    opacity: 1;
+  }
+  .video-modal-inner {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .video-modal.active .video-modal-inner {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  .video-modal.active #modal-video-title {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('video-modal');
+    const modalContent = document.getElementById('video-modal-content');
+    const modalVideo = document.getElementById('modal-video');
+    const modalSource = document.getElementById('modal-video-source');
+    const modalTitle = document.getElementById('modal-video-title');
+    const closeBtn = document.getElementById('video-modal-close');
+    const galleryVideos = document.querySelectorAll('[data-video]');
+    let isOpen = false;
+    let lastFocusedElement = null;
+
+    function getFocusableElements() {
+      return modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), video');
+    }
+
+    function trapFocus(e) {
+      const focusable = getFocusableElements();
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.key === 'Tab') {
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    function openModal(src, title, triggerEl) {
+      if (isOpen) return;
+      isOpen = true;
+      lastFocusedElement = triggerEl || document.activeElement;
+      modalSource.src = src;
+      modalVideo.load();
+      modalTitle.textContent = title;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      // Trigger reflow for CSS transition
+      void modal.offsetWidth;
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      // Auto-play with slight delay for smooth entrance
+      setTimeout(() => {
+        modalVideo.play().catch(() => {});
+      }, 300);
+      // Focus trap
+      document.addEventListener('keydown', trapFocus);
+      // Focus close button
+      setTimeout(() => closeBtn.focus(), 100);
+    }
+
+    function closeModal() {
+      if (!isOpen) return;
+      isOpen = false;
+      modal.classList.remove('active');
+      modalVideo.pause();
+      modalVideo.currentTime = 0;
+      document.removeEventListener('keydown', trapFocus);
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modalSource.src = '';
+        modalVideo.load();
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        // Return focus
+        if (lastFocusedElement) lastFocusedElement.focus();
+      }, 400);
+    }
+
+    // Play buttons open modal
+    const playButtons = document.querySelectorAll('.video-play-btn');
+    playButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const card = btn.closest('.group');
+        const video = card.querySelector('video[data-video]');
+        const title = card.querySelector('h3')?.textContent || '';
+        const src = video?.querySelector('source')?.src || btn.dataset.videoSrc;
+        if (src) openModal(src, title, btn);
+      });
+    });
+
+    // Click on card (except button) also opens modal
+    galleryVideos.forEach(video => {
+      const card = video.closest('.group');
+      if (card) {
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('.video-play-btn')) return;
+          const title = card.querySelector('h3')?.textContent || '';
+          const src = video.querySelector('source')?.src;
+          if (src) openModal(src, title, card);
+        });
+        card.style.cursor = 'pointer';
+      }
+    });
+
+    // Close handlers
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal || e.target === modalContent) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isOpen) closeModal();
+    });
+
+    // Lazy loading gallery videos (only metadata, no play)
+    if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const video = entry.target;
+            if (video.dataset.loaded) return;
+            video.dataset.loaded = 'true';
+            video.preload = 'metadata';
+            observer.unobserve(video);
+          }
+        });
+      }, { rootMargin: '200px', threshold: 0.1 });
+      galleryVideos.forEach(video => videoObserver.observe(video));
+    }
+  });
+</script>
